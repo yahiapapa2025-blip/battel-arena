@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Battle Arena</title>
+
+<style>
+
+html,body{
+margin:0;
+overflow:hidden;
+background:#000;
+font-family:Arial;
+}
+
+#game{
+width:100vw;
+height:100vh;
+}
+
+#crosshair{
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+font-size:32px;
+color:white;
+user-select:none;
+z-index:10;
+}
+
+#hud{
+position:absolute;
+left:20px;
+top:20px;
+color:white;
+z-index:10;
+font-size:22px;
+}
+
+#hp{
+margin-top:10px;
+}
+
+</style>
+
+<script type="importmap">
+{
+"imports":{
+"three":"https://unpkg.com/three@0.179.1/build/three.module.js"
+}
+}
+</script>
+
+</head>
+
+<body>
+
+<div id="hud">
+Battle Arena
+<div id="hp">
+❤️ 200
+</div>
+</div>
+
+<div id="crosshair">
++
+</div>
+
+<div id="game"></div>
+
+<script type="module" src="js/game.js"></script>
+
+</body>
+</html>
