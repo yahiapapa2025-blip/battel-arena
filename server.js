@@ -3,7 +3,7 @@ const path = require("path");
 
 const app = express();
 
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 app.use(express.json());
 
