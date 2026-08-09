@@ -17,12 +17,17 @@ const playerSchema = new mongoose.Schema(
       maxlength: 16
     },
 
-    // مفتاح الحساب مشفّر/مُجزّأ في قاعدة البيانات
     accountKeyHash: {
       type: String,
       required: true,
       unique: true,
       index: true
+    },
+
+    characterId: {
+      type: Number,
+      enum: [1, 2],
+      default: 1
     },
 
     diamonds: {
