@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Battle Arena - Admin Bot</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
+    }
+
+    .container {
+      width: min(900px, 94%);
+      margin: 30px auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9ca3af;
+      margin-bottom: 25px;
+    }
+
+    .chat {
+      background: #111827;
+      border: 1px solid #263244;
+      border-radius: 18px;
+      min-height: 500px;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background: #2563eb;
+      margin-right: auto;
+    }
+
+    .bot {
+      background: #1f2937;
+      margin-left: auto;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #374151;
+      background: #111827;
+      color: white;
+      outline: none;
+    }
+
+    button {
+      padding: 15px 22px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .services {
+      margin-top: 20px;
+      padding: 18px;
+      background: #111827;
+      border-radius: 15px;
+    }
+
+    .services code {
+      display: block;
+      margin: 7px 0;
+      color: #93c5fd;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🤖 Battle Arena AI Controller</h1>
+
+  <div class="subtitle">
+    لوحة التحكم الخاصة بالمالك
+  </div>
+
+  <div id="chat" class="chat">
+    <div class="message bot">
+      🤖 أهلا! أنا Battle Arena Controller.
+      اكتب أمرك هنا.
+    </div>
+  </div>
+
+  <div class="input-area">
+    <input
+      id="command"
+      type="text"
+      placeholder="مثال: اشحن 1234567 500"
+      autocomplete="off"
+    >
+
+    <button onclick="sendCommand()">
+      إرسال
+    </button>
+  </div>
+
+  <div class="services">
+
+    <h3>🛠️ الأوامر المتاحة</h3>
+
+    <code>اشحن ID AMOUNT</code>
+    <code>ذهب ID AMOUNT</code>
+    <code>معلومات ID</code>
+    <code>حالة البوت</code>
+
+    <p>
+      سيتم إضافة أوامر الإدارة الأخرى لاحقًا.
+    </p>
+
+  </div>
+
+</div>
+
+<script>
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("command");
+
+function addMessage(text, type) {
+
+  const div = document.createElement("div");
+
+  div.className = `message ${type}`;
+
+  div.textContent = text;
+
+  chat.appendChild(div);
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function sendCommand() {
+
+  const command = input.value.trim();
+
+  if (!command) return;
+
+  addMessage(command, "user");
+
+  input.value = "";
+
+  try {
+
+    /*
+      مهم:
+      المفتاح الإداري ما نحطوهش هنا داخل HTML.
+      لاحقًا نديرو Login خاص بالمالك.
+    */
+
+    const response = await fetch("/api/admin/bot", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+
+        // "x-admin-key": ...
+      },
+
+      body: JSON.stringify({
+        command
+      })
+
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      let text = `✅ ${data.message}`;
+
+      if (data.player) {
+
+        text +=
+          `\n👤 ${data.player.username || ""}` +
+          `\n🆔 ${data.player.id || data.player.playerId || ""}`;
+
+        if (data.player.diamonds !== undefined) {
+          text += `\n💎 Diamonds: ${data.player.diamonds}`;
+        }
+
+        if (data.player.gold !== undefined) {
+          text += `\n🪙 Gold: ${data.player.gold}`;
+        }
+      }
+
+      addMessage(text, "bot");
+
+    } else {
+
+      addMessage(
+        `❌ ${data.message || "حدث خطأ"}`,
+        "bot"
+      );
+
+    }
+
+  } catch (error) {
+
+    addMessage(
+      "❌ تعذر الاتصال بالسيرفر",
+      "bot"
+    );
+
+    console.error(error);
+  }
+}
+
+input.addEventListener("keydown", function(event) {
+
+  if (event.key === "Enter") {
+    sendCommand();
+  }
+
+});
+
+</script>
+
+</body>
+</html>
