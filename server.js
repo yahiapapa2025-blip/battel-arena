@@ -4,7 +4,6 @@ const crypto = require("crypto");
 const Player = require("./models/player");
 
 const app = express();
-
 const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
@@ -12,50 +11,60 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 
-// ======================================
-// 🔐 SECURITY HELPERS
-// ======================================
+// ================================
+// 🔐 ACCOUNT KEY
+// ================================
 
-function hashAccountKey(key) {
+function hashKey(key) {
   return crypto
     .createHash("sha256")
     .update(key)
     .digest("hex");
 }
 
-
-function generateAccountKey() {
+function createAccountKey() {
   return (
     "BA-" +
-    crypto.randomBytes(18).toString("hex").toUpperCase()
+    crypto
+      .randomBytes(18)
+      .toString("hex")
+      .toUpperCase()
   );
 }
 
 
-async function generatePlayerId() {
-  let playerId;
+// ================================
+// 🆔 PLAYER ID
+// ================================
+
+async function createPlayerId() {
+  let id;
   let exists = true;
 
   while (exists) {
-    playerId = Math.floor(
-      1000000 + Math.random() * 9000000
+    id = Math.floor(
+      1000000 +
+      Math.random() * 9000000
     );
 
-    exists = await Player.exists({ playerId });
+    exists = await Player.exists({
+      playerId: id
+    });
   }
 
-  return playerId;
+  return id;
 }
 
 
-// ======================================
+// ================================
 // 🗄️ MONGODB
-// ======================================
+// ================================
 
-async function connectMongoDB() {
+async function connectDB() {
   try {
+
     if (!process.env.MONGODB_URI) {
-      console.log("❌ MONGODB_URI غير موجود");
+      console.log("❌ MONGODB_URI missing");
       return;
     }
 
@@ -66,19 +75,21 @@ async function connectMongoDB() {
     console.log("✅ MongoDB Connected");
 
   } catch (error) {
+
     console.log(
       "❌ MongoDB Error:",
       error.message
     );
+
   }
 }
 
-connectMongoDB();
+connectDB();
 
 
-// ======================================
+// ================================
 // 🏠 HOME
-// ======================================
+// ================================
 
 app.get("/", (req, res) => {
   res.sendFile(
@@ -87,9 +98,9 @@ app.get("/", (req, res) => {
 });
 
 
-// ======================================
-// 🆕 CREATE ACCOUNT
-// ======================================
+// ================================
+// 🆕 REGISTER
+// ================================
 
 app.post("/api/register", async (req, res) => {
 
@@ -98,13 +109,17 @@ app.post("/api/register", async (req, res) => {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({
         success: false,
-        message: "السيرفر مازال ما اتصلش بقاعدة البيانات"
+        message: "قاعدة البيانات غير متصلة"
       });
     }
 
-    const username = String(
-      req.body.username || ""
-    ).trim();
+    const username =
+      String(req.body.username || "")
+        .trim();
+
+    const characterId =
+      Number(req.body.characterId);
+
 
     if (!username) {
       return res.status(400).json({
@@ -113,6 +128,7 @@ app.post("/api/register", async (req, res) => {
       });
     }
 
+
     if (username.length < 3) {
       return res.status(400).json({
         success: false,
@@ -120,21 +136,22 @@ app.post("/api/register", async (req, res) => {
       });
     }
 
-    if (username.length > 16) {
+
+    if (![1, 2].includes(characterId)) {
       return res.status(400).json({
         success: false,
-        message: "الاسم طويل بزاف"
+        message: "الشخصية غير صالحة"
       });
     }
 
 
-    // الاسم موجود؟
-    const existingPlayer =
+    const existing =
       await Player.findOne({
         username
       });
 
-    if (existingPlayer) {
+
+    if (existing) {
       return res.status(409).json({
         success: false,
         message: "اسم اللاعب مستعمل"
@@ -142,19 +159,14 @@ app.post("/api/register", async (req, res) => {
     }
 
 
-    // إنشاء ID
     const playerId =
-      await generatePlayerId();
+      await createPlayerId();
 
-
-    // إنشاء مفتاح الحساب
     const accountKey =
-      generateAccountKey();
+      createAccountKey();
 
-
-    // نخزنو Hash فقط في MongoDB
     const accountKeyHash =
-      hashAccountKey(accountKey);
+      hashKey(accountKey);
 
 
     const player =
@@ -166,48 +178,52 @@ app.post("/api/register", async (req, res) => {
 
         accountKeyHash,
 
+        characterId,
+
         diamonds: 0,
 
         gold: 0,
 
-        level: 1,
-
-        developerBadge: false,
-
-        partnershipBanner: false,
-
-        banned: false
+        level: 1
 
       });
 
 
     console.log(
-      `👤 Account Created | ${username} | ${playerId}`
+      `👤 Created: ${username} | ${playerId} | Character ${characterId}`
     );
 
 
-    // المفتاح يرجع للاعب مرة إنشاء الحساب
     res.json({
 
       success: true,
 
-      message: "تم إنشاء الحساب بنجاح",
+      message: "تم إنشاء الحساب",
 
       accountKey,
 
       player: {
 
-        playerId: player.playerId,
+        playerId:
+          player.playerId,
 
-        username: player.username,
+        username:
+          player.username,
 
-        diamonds: player.diamonds,
+        characterId:
+          player.characterId,
 
-        gold: player.gold,
+        diamonds:
+          player.diamonds,
 
-        level: player.level,
+        gold:
+          player.gold,
 
-        banned: player.banned
+        level:
+          player.level,
+
+        developerBadge:
+          player.developerBadge
 
       }
 
@@ -234,9 +250,9 @@ app.post("/api/register", async (req, res) => {
 });
 
 
-// ======================================
-// 🔑 LOGIN WITH ACCOUNT KEY
-// ======================================
+// ================================
+// 🔑 LOGIN
+// ================================
 
 app.post("/api/login", async (req, res) => {
 
@@ -249,51 +265,36 @@ app.post("/api/login", async (req, res) => {
 
 
     if (!accountKey) {
-
       return res.status(400).json({
-
         success: false,
-
         message: "أدخل Account Key"
-
       });
-
     }
 
 
-    const accountKeyHash =
-      hashAccountKey(accountKey);
+    const hash =
+      hashKey(accountKey);
 
 
     const player =
       await Player.findOne({
-        accountKeyHash
+        accountKeyHash: hash
       });
 
 
     if (!player) {
-
       return res.status(401).json({
-
         success: false,
-
         message: "Account Key غير صحيح"
-
       });
-
     }
 
 
     if (player.banned) {
-
       return res.status(403).json({
-
         success: false,
-
-        message: "هذا الحساب محظور"
-
+        message: "الحساب محظور"
       });
-
     }
 
 
@@ -301,27 +302,31 @@ app.post("/api/login", async (req, res) => {
 
       success: true,
 
-      message: "تم الدخول",
-
       player: {
 
-        playerId: player.playerId,
+        playerId:
+          player.playerId,
 
-        username: player.username,
+        username:
+          player.username,
 
-        diamonds: player.diamonds,
+        characterId:
+          player.characterId,
 
-        gold: player.gold,
+        diamonds:
+          player.diamonds,
 
-        level: player.level,
+        gold:
+          player.gold,
+
+        level:
+          player.level,
 
         developerBadge:
           player.developerBadge,
 
         partnershipBanner:
-          player.partnershipBanner,
-
-        banned: player.banned
+          player.partnershipBanner
 
       }
 
@@ -348,161 +353,122 @@ app.post("/api/login", async (req, res) => {
 });
 
 
-// ======================================
-// 👤 GET PLAYER
-// ======================================
+// ================================
+// 👤 PLAYER
+// ================================
 
-app.get(
-  "/api/player/:id",
-  async (req, res) => {
+app.get("/api/player/:id", async (req, res) => {
 
-    try {
+  try {
 
-      const playerId =
-        Number(req.params.id);
+    const id =
+      Number(req.params.id);
 
 
-      if (!Number.isInteger(playerId)) {
-
-        return res.status(400).json({
-
-          success: false,
-
-          message: "ID غير صالح"
-
-        });
-
-      }
-
-
-      const player =
-        await Player.findOne({
-          playerId
-        });
-
-
-      if (!player) {
-
-        return res.status(404).json({
-
-          success: false,
-
-          message: "اللاعب غير موجود"
-
-        });
-
-      }
-
-
-      res.json({
-
-        success: true,
-
-        player: {
-
-          playerId: player.playerId,
-
-          username: player.username,
-
-          diamonds: player.diamonds,
-
-          gold: player.gold,
-
-          level: player.level,
-
-          developerBadge:
-            player.developerBadge,
-
-          partnershipBanner:
-            player.partnershipBanner,
-
-          banned: player.banned
-
-        }
-
+    const player =
+      await Player.findOne({
+        playerId: id
       });
 
 
-    } catch (error) {
+    if (!player) {
 
-      console.log(
-        "❌ Player Error:",
-        error.message
-      );
-
-      res.status(500).json({
-
+      return res.status(404).json({
         success: false,
-
-        message: "خطأ في السيرفر"
-
+        message: "اللاعب غير موجود"
       });
 
     }
 
-  }
-);
-
-
-// ======================================
-// ❤️ SERVER HEALTH
-// ======================================
-
-app.get(
-  "/api/health",
-  (req, res) => {
 
     res.json({
 
       success: true,
 
-      server: "ONLINE",
+      player: {
 
-      mongodb:
-        mongoose.connection.readyState === 1
-          ? "CONNECTED"
-          : "DISCONNECTED",
+        playerId:
+          player.playerId,
 
-      time:
-        new Date().toISOString()
+        username:
+          player.username,
+
+        characterId:
+          player.characterId,
+
+        diamonds:
+          player.diamonds,
+
+        gold:
+          player.gold,
+
+        level:
+          player.level,
+
+        developerBadge:
+          player.developerBadge
+
+      }
+
+    });
+
+
+  } catch (error) {
+
+    res.status(500).json({
+
+      success: false,
+      message: "Server Error"
 
     });
 
   }
-);
+
+});
 
 
-// ======================================
+// ================================
+// ❤️ HEALTH
+// ================================
+
+app.get("/api/health", (req, res) => {
+
+  res.json({
+
+    success: true,
+
+    server: "ONLINE",
+
+    mongodb:
+      mongoose.connection.readyState === 1
+        ? "CONNECTED"
+        : "DISCONNECTED"
+
+  });
+
+});
+
+
+// ================================
 // 🚀 START
-// ======================================
+// ================================
 
 app.listen(
   PORT,
   "0.0.0.0",
   () => {
 
-    console.log("");
-    console.log(
-      "🔥 ==============================="
-    );
     console.log(
       "🔥 BATTLE ARENA SERVER ONLINE"
     );
-    console.log(
-      "🔥 ==============================="
-    );
 
     console.log(
-      "🌐 Port:",
+      "🌐 PORT:",
       PORT
     );
 
     console.log(
-      "👤 Permanent Accounts: ON"
-    );
-
-    console.log(
-      "🔐 Account Keys: ON"
+      "🎭 3D CHARACTERS: ON"
     );
 
   }
