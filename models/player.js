@@ -1,60 +1,68 @@
 const mongoose = require("mongoose");
 
-const PlayerSchema = new mongoose.Schema({
-  playerId: {
-    type: Number,
-    unique: true,
-    required: true
-  },
+const playerSchema = new mongoose.Schema(
+  {
+    playerId: {
+      type: Number,
+      required: true,
+      unique: true,
+      index: true
+    },
 
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 16
-  },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      maxlength: 16
+    },
 
-  diamonds: {
-    type: Number,
-    default: 0
-  },
+    // مفتاح الحساب مشفّر/مُجزّأ في قاعدة البيانات
+    accountKeyHash: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
 
-  gold: {
-    type: Number,
-    default: 0
-  },
+    diamonds: {
+      type: Number,
+      default: 0
+    },
 
-  level: {
-    type: Number,
-    default: 1
-  },
+    gold: {
+      type: Number,
+      default: 0
+    },
 
-  developerBadge: {
-    type: Boolean,
-    default: false
-  },
+    level: {
+      type: Number,
+      default: 1
+    },
 
-  partnershipBanner: {
-    type: Boolean,
-    default: false
-  },
+    developerBadge: {
+      type: Boolean,
+      default: false
+    },
 
-  banned: {
-    type: Boolean,
-    default: false
-  },
+    partnershipBanner: {
+      type: Boolean,
+      default: false
+    },
 
-  banReason: {
-    type: String,
-    default: ""
-  },
+    banned: {
+      type: Boolean,
+      default: false
+    },
 
-  createdAt: {
-    type: Date,
-    default: Date.now
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  {
+    versionKey: false
   }
-});
+);
 
-module.exports = mongoose.model("Player", PlayerSchema);
+module.exports = mongoose.model("Player", playerSchema);
