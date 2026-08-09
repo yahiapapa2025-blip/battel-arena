@@ -1,131 +1,218 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 const Player = require("./models/player");
-const botController = require("./bot/botController");
 
 const app = express();
+
+const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-const PORT = process.env.PORT || 10000;
 
-// =====================================
+// ======================================
+// 🔐 SECURITY HELPERS
+// ======================================
+
+function hashAccountKey(key) {
+  return crypto
+    .createHash("sha256")
+    .update(key)
+    .digest("hex");
+}
+
+
+function generateAccountKey() {
+  return (
+    "BA-" +
+    crypto.randomBytes(18).toString("hex").toUpperCase()
+  );
+}
+
+
+async function generatePlayerId() {
+  let playerId;
+  let exists = true;
+
+  while (exists) {
+    playerId = Math.floor(
+      1000000 + Math.random() * 9000000
+    );
+
+    exists = await Player.exists({ playerId });
+  }
+
+  return playerId;
+}
+
+
+// ======================================
 // 🗄️ MONGODB
-// =====================================
+// ======================================
 
 async function connectMongoDB() {
   try {
     if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is missing");
+      console.log("❌ MONGODB_URI غير موجود");
+      return;
     }
 
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(
+      process.env.MONGODB_URI
+    );
 
     console.log("✅ MongoDB Connected");
 
   } catch (error) {
-    console.log("❌ MongoDB Error:", error.message);
+    console.log(
+      "❌ MongoDB Error:",
+      error.message
+    );
   }
 }
 
 connectMongoDB();
 
 
-// =====================================
+// ======================================
 // 🏠 HOME
-// =====================================
+// ======================================
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(
+    __dirname + "/index.html"
+  );
 });
 
 
-// =====================================
-// 👤 REGISTER PLAYER
-// =====================================
+// ======================================
+// 🆕 CREATE ACCOUNT
+// ======================================
 
 app.post("/api/register", async (req, res) => {
 
   try {
 
-    const username =
-      String(req.body.username || "").trim();
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({
+        success: false,
+        message: "السيرفر مازال ما اتصلش بقاعدة البيانات"
+      });
+    }
+
+    const username = String(
+      req.body.username || ""
+    ).trim();
 
     if (!username) {
-
       return res.status(400).json({
         success: false,
         message: "اكتب اسم اللاعب"
       });
-
     }
 
     if (username.length < 3) {
-
       return res.status(400).json({
         success: false,
         message: "الاسم لازم يكون 3 حروف على الأقل"
       });
-
     }
 
-    const exists =
-      await Player.findOne({ username });
-
-    if (exists) {
-
+    if (username.length > 16) {
       return res.status(400).json({
+        success: false,
+        message: "الاسم طويل بزاف"
+      });
+    }
+
+
+    // الاسم موجود؟
+    const existingPlayer =
+      await Player.findOne({
+        username
+      });
+
+    if (existingPlayer) {
+      return res.status(409).json({
         success: false,
         message: "اسم اللاعب مستعمل"
       });
-
     }
 
-    let playerId;
 
-    let existsId = true;
+    // إنشاء ID
+    const playerId =
+      await generatePlayerId();
 
-    while (existsId) {
 
-      playerId =
-        Math.floor(
-          1000000 +
-          Math.random() * 9000000
-        );
+    // إنشاء مفتاح الحساب
+    const accountKey =
+      generateAccountKey();
 
-      existsId =
-        await Player.findOne({ playerId });
-    }
+
+    // نخزنو Hash فقط في MongoDB
+    const accountKeyHash =
+      hashAccountKey(accountKey);
+
 
     const player =
       await Player.create({
 
         playerId,
-        username
+
+        username,
+
+        accountKeyHash,
+
+        diamonds: 0,
+
+        gold: 0,
+
+        level: 1,
+
+        developerBadge: false,
+
+        partnershipBanner: false,
+
+        banned: false
 
       });
 
+
     console.log(
-      `👤 Player Created: ${username} | ID: ${playerId}`
+      `👤 Account Created | ${username} | ${playerId}`
     );
 
+
+    // المفتاح يرجع للاعب مرة إنشاء الحساب
     res.json({
 
       success: true,
 
-      message: "تم إنشاء الحساب",
+      message: "تم إنشاء الحساب بنجاح",
+
+      accountKey,
 
       player: {
+
         playerId: player.playerId,
+
         username: player.username,
+
         diamonds: player.diamonds,
+
         gold: player.gold,
-        level: player.level
+
+        level: player.level,
+
+        banned: player.banned
+
       }
 
     });
+
 
   } catch (error) {
 
@@ -147,63 +234,112 @@ app.post("/api/register", async (req, res) => {
 });
 
 
-// =====================================
-// 👤 GET PLAYER
-// =====================================
+// ======================================
+// 🔑 LOGIN WITH ACCOUNT KEY
+// ======================================
 
-app.get("/api/player/:id", async (req, res) => {
+app.post("/api/login", async (req, res) => {
 
   try {
 
-    const playerId =
-      Number(req.params.id);
+    const accountKey =
+      String(
+        req.body.accountKey || ""
+      ).trim();
 
-    if (!Number.isInteger(playerId)) {
+
+    if (!accountKey) {
 
       return res.status(400).json({
 
         success: false,
-        message: "ID غير صالح"
+
+        message: "أدخل Account Key"
 
       });
 
     }
+
+
+    const accountKeyHash =
+      hashAccountKey(accountKey);
+
 
     const player =
       await Player.findOne({
-        playerId
+        accountKeyHash
       });
+
 
     if (!player) {
 
-      return res.status(404).json({
+      return res.status(401).json({
 
         success: false,
-        message: "اللاعب غير موجود"
+
+        message: "Account Key غير صحيح"
 
       });
 
     }
+
+
+    if (player.banned) {
+
+      return res.status(403).json({
+
+        success: false,
+
+        message: "هذا الحساب محظور"
+
+      });
+
+    }
+
 
     res.json({
 
       success: true,
 
-      player
+      message: "تم الدخول",
+
+      player: {
+
+        playerId: player.playerId,
+
+        username: player.username,
+
+        diamonds: player.diamonds,
+
+        gold: player.gold,
+
+        level: player.level,
+
+        developerBadge:
+          player.developerBadge,
+
+        partnershipBanner:
+          player.partnershipBanner,
+
+        banned: player.banned
+
+      }
 
     });
+
 
   } catch (error) {
 
     console.log(
-      "❌ Player Error:",
+      "❌ Login Error:",
       error.message
     );
 
     res.status(500).json({
 
       success: false,
-      message: "خطأ في السيرفر"
+
+      message: "خطأ في تسجيل الدخول"
 
     });
 
@@ -212,80 +348,133 @@ app.get("/api/player/:id", async (req, res) => {
 });
 
 
-// =====================================
-// 🤖 BOT STATUS
-// =====================================
+// ======================================
+// 👤 GET PLAYER
+// ======================================
 
-app.get("/api/bot/status", (req, res) => {
+app.get(
+  "/api/player/:id",
+  async (req, res) => {
 
-  try {
+    try {
+
+      const playerId =
+        Number(req.params.id);
+
+
+      if (!Number.isInteger(playerId)) {
+
+        return res.status(400).json({
+
+          success: false,
+
+          message: "ID غير صالح"
+
+        });
+
+      }
+
+
+      const player =
+        await Player.findOne({
+          playerId
+        });
+
+
+      if (!player) {
+
+        return res.status(404).json({
+
+          success: false,
+
+          message: "اللاعب غير موجود"
+
+        });
+
+      }
+
+
+      res.json({
+
+        success: true,
+
+        player: {
+
+          playerId: player.playerId,
+
+          username: player.username,
+
+          diamonds: player.diamonds,
+
+          gold: player.gold,
+
+          level: player.level,
+
+          developerBadge:
+            player.developerBadge,
+
+          partnershipBanner:
+            player.partnershipBanner,
+
+          banned: player.banned
+
+        }
+
+      });
+
+
+    } catch (error) {
+
+      console.log(
+        "❌ Player Error:",
+        error.message
+      );
+
+      res.status(500).json({
+
+        success: false,
+
+        message: "خطأ في السيرفر"
+
+      });
+
+    }
+
+  }
+);
+
+
+// ======================================
+// ❤️ SERVER HEALTH
+// ======================================
+
+app.get(
+  "/api/health",
+  (req, res) => {
 
     res.json({
 
       success: true,
 
-      bot: botController.getStatus()
+      server: "ONLINE",
 
-    });
+      mongodb:
+        mongoose.connection.readyState === 1
+          ? "CONNECTED"
+          : "DISCONNECTED",
 
-  } catch (error) {
-
-    res.status(500).json({
-
-      success: false,
-      message: error.message
+      time:
+        new Date().toISOString()
 
     });
 
   }
-
-});
-
-
-// =====================================
-// 🩺 SERVER HEALTH
-// =====================================
-
-app.get("/api/health", (req, res) => {
-
-  res.json({
-
-    success: true,
-
-    server: "ONLINE",
-
-    mongodb:
-      mongoose.connection.readyState === 1
-        ? "CONNECTED"
-        : "DISCONNECTED",
-
-    time: new Date().toISOString()
-
-  });
-
-});
+);
 
 
-// =====================================
-// ❌ 404
-// =====================================
-
-app.use((req, res) => {
-
-  res.status(404).json({
-
-    success: false,
-
-    message: "Route not found"
-
-  });
-
-});
-
-
-// =====================================
-// 🚀 START SERVER
-// =====================================
+// ======================================
+// 🚀 START
+// ======================================
 
 app.listen(
   PORT,
@@ -293,12 +482,28 @@ app.listen(
   () => {
 
     console.log("");
-    console.log("🔥 =============================");
-    console.log("🔥 BATTLE ARENA SERVER");
-    console.log("🔥 =============================");
-    console.log(`🌐 Port: ${PORT}`);
-    console.log("🤖 Bot Controller: ONLINE");
-    console.log("===============================");
+    console.log(
+      "🔥 ==============================="
+    );
+    console.log(
+      "🔥 BATTLE ARENA SERVER ONLINE"
+    );
+    console.log(
+      "🔥 ==============================="
+    );
+
+    console.log(
+      "🌐 Port:",
+      PORT
+    );
+
+    console.log(
+      "👤 Permanent Accounts: ON"
+    );
+
+    console.log(
+      "🔐 Account Keys: ON"
+    );
 
   }
 );
