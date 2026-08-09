@@ -1,60 +1,251 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Battle Arena</title>
+  <title>Battle Arena</title>
 
-<link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #263b72 0%, #10172d 40%, #070b16 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .box {
+      width: 92%;
+      max-width: 430px;
+      padding: 35px 28px;
+      border-radius: 25px;
+      background: rgba(15, 22, 43, 0.94);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      text-align: center;
+    }
+
+    .logo {
+      width: 95px;
+      height: 95px;
+      margin: 0 auto 15px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #ffb300, #ff5e00);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 45px;
+      font-weight: 900;
+      box-shadow: 0 0 35px rgba(255,140,0,.45);
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 7px;
+    }
+
+    .sub {
+      color: #9da8c4;
+      margin-bottom: 28px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      outline: none;
+      border-radius: 13px;
+      background: #202b49;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 13px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .random {
+      background: #303c5e;
+      color: white;
+    }
+
+    .create {
+      background: linear-gradient(90deg, #ffb300, #ff6200);
+      color: white;
+      box-shadow: 0 8px 25px rgba(255,100,0,.25);
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 13px;
+      background: #16213b;
+      display: none;
+    }
+
+    .id {
+      color: #ffb300;
+      font-size: 25px;
+      font-weight: bold;
+      margin-top: 7px;
+    }
+
+    .error {
+      color: #ff5c5c;
+      margin-top: 15px;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="topbar">
+  <div class="box">
 
-<div class="profile">
-👤 <span id="username">Loading...</span>
-</div>
+    <div class="logo">⚔️</div>
 
-<div class="money">
-💎 <span id="diamonds">0</span>
-</div>
+    <h1>BATTLE ARENA</h1>
 
-<div class="money">
-🪙 <span id="gold">0</span>
-</div>
+    <div class="sub">
+      أنشئ حسابك وابدأ المعركة 🔥
+    </div>
 
-<div class="money">
-⭐ Lv.<span id="level">1</span>
-</div>
+    <input
+      id="username"
+      type="text"
+      maxlength="16"
+      placeholder="اسم اللاعب"
+    >
 
-</div>
+    <button class="random" onclick="randomName()">
+      🎲 اسم عشوائي
+    </button>
 
-<div class="center">
+    <button class="create" onclick="createAccount()">
+      🚀 إنشاء الحساب
+    </button>
 
-<h1>🎮 Battle Arena</h1>
+    <div id="result">
+      <div>🎉 تم إنشاء حسابك!</div>
+      <div id="playerName"></div>
+      <div class="id" id="playerId"></div>
+      <div style="color:#9da8c4;margin-top:5px">
+        هذا هو ID تاعك
+      </div>
+    </div>
 
-<button onclick="startGame()">
-▶ START
-</button>
+    <div id="error" class="error"></div>
 
-<button onclick="openStore()">
-🛒 STORE
-</button>
+  </div>
 
-<button onclick="openInventory()">
-🎒 INVENTORY
-</button>
+<script>
 
-<button onclick="openSettings()">
-⚙ SETTINGS
-</button>
+const names = [
+  "Shadow",
+  "Blaze",
+  "Nova",
+  "Ghost",
+  "Falcon",
+  "Titan",
+  "Viper",
+  "Storm",
+  "Raven",
+  "Hunter"
+];
 
-</div>
+function randomName() {
 
-<script src="app.js"></script>
+  const name =
+    names[Math.floor(Math.random() * names.length)];
+
+  const number =
+    Math.floor(100 + Math.random() * 900);
+
+  document.getElementById("username").value =
+    name + "_" + number;
+}
+
+function createAccount() {
+
+  let username =
+    document.getElementById("username").value.trim();
+
+  // إذا اللاعب ما كتبش اسم، نعطيوه اسم عشوائي
+  if (!username) {
+    randomName();
+    username =
+      document.getElementById("username").value;
+  }
+
+  document.getElementById("error").textContent = "";
+
+  fetch("/api/register", {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      username: username
+    })
+
+  })
+
+  .then(response => response.json())
+
+  .then(data => {
+
+    if (!data.success) {
+      document.getElementById("error").textContent =
+        "❌ " + data.message;
+      return;
+    }
+
+    document.getElementById("result").style.display =
+      "block";
+
+    document.getElementById("playerName").textContent =
+      "👤 " + data.player.username;
+
+    document.getElementById("playerId").textContent =
+      data.player.playerId;
+
+  })
+
+  .catch(error => {
+
+    console.error(error);
+
+    document.getElementById("error").textContent =
+      "❌ صار خطأ في الاتصال بالسيرفر";
+
+  });
+}
+
+// اسم جاهز من البداية
+randomName();
+
+</script>
 
 </body>
 </html>
