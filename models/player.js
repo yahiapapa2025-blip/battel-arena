@@ -1,76 +1,60 @@
 const mongoose = require("mongoose");
 
-const PlayerSchema = new mongoose.Schema(
-    {
-        playerId: {
-            type: Number,
-            unique: true,
-            required: true
-        },
+const PlayerSchema = new mongoose.Schema({
+  playerId: {
+    type: Number,
+    unique: true,
+    required: true
+  },
 
-        username: {
-            type: String,
-            unique: true,
-            required: true,
-            trim: true,
-            minlength: 3,
-            maxlength: 16
-        },
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 16
+  },
 
-        diamonds: {
-            type: Number,
-            default: 0
-        },
+  diamonds: {
+    type: Number,
+    default: 0
+  },
 
-        gold: {
-            type: Number,
-            default: 0
-        },
+  gold: {
+    type: Number,
+    default: 0
+  },
 
-        level: {
-            type: Number,
-            default: 1
-        },
+  level: {
+    type: Number,
+    default: 1
+  },
 
-        xp: {
-            type: Number,
-            default: 0
-        },
+  developerBadge: {
+    type: Boolean,
+    default: false
+  },
 
-        friends: {
-            type: [Number],
-            default: []
-        },
+  partnershipBanner: {
+    type: Boolean,
+    default: false
+  },
 
-        inventory: {
-            type: [String],
-            default: []
-        },
+  banned: {
+    type: Boolean,
+    default: false
+  },
 
-        equippedSkin: {
-            type: String,
-            default: null
-        },
+  banReason: {
+    type: String,
+    default: ""
+  },
 
-        developerBadge: {
-            type: Boolean,
-            default: false
-        },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-        partnershipBanner: {
-            type: Boolean,
-            default: false
-        },
-
-        banned: {
-            type: Boolean,
-            default: false
-        }
-    },
-    {
-        timestamps: true
-    }
-);
-
-module.exports =
-    mongoose.model("Player", PlayerSchema);
+module.exports = mongoose.model("Player", PlayerSchema);
