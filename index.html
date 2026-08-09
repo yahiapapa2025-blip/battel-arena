@@ -9,169 +9,312 @@
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     body {
+      margin: 0;
       min-height: 100vh;
       font-family: Arial, sans-serif;
       background:
-        radial-gradient(circle at top, #263b72 0%, #10172d 40%, #070b16 100%);
+        radial-gradient(circle at top, #26345c 0%, #10162b 35%, #060912 100%);
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: white;
+      padding: 20px;
     }
 
-    .box {
-      width: 92%;
-      max-width: 430px;
-      padding: 35px 28px;
-      border-radius: 25px;
-      background: rgba(15, 22, 43, 0.94);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    .container {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .card {
+      background: rgba(15, 22, 42, 0.94);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.55);
       text-align: center;
     }
 
     .logo {
-      width: 95px;
-      height: 95px;
+      width: 90px;
+      height: 90px;
       margin: 0 auto 15px;
-      border-radius: 28px;
-      background: linear-gradient(135deg, #ffb300, #ff5e00);
+
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 45px;
-      font-weight: 900;
-      box-shadow: 0 0 35px rgba(255,140,0,.45);
+
+      border-radius: 25px;
+
+      background:
+        linear-gradient(135deg, #ff9d00, #ff3d00);
+
+      font-size: 48px;
+
+      box-shadow:
+        0 0 35px rgba(255,100,0,0.35);
     }
 
     h1 {
-      font-size: 30px;
-      margin-bottom: 7px;
+      margin: 5px 0;
+      font-size: 32px;
+      letter-spacing: 1px;
     }
 
     .sub {
-      color: #9da8c4;
-      margin-bottom: 28px;
+      color: #aeb9d5;
+      margin: 10px 0 25px;
+    }
+
+    .online {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      padding: 7px 13px;
+      border-radius: 20px;
+
+      background: rgba(34,197,94,0.12);
+      color: #4ade80;
+
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 10px #22c55e;
     }
 
     input {
       width: 100%;
-      padding: 15px;
-      border: 0;
-      outline: none;
-      border-radius: 13px;
-      background: #202b49;
+      padding: 16px;
+
+      border-radius: 14px;
+      border: 1px solid #303b5a;
+
+      background: #0a1020;
       color: white;
+
+      outline: none;
       font-size: 16px;
+
       text-align: center;
-      margin-bottom: 12px;
+    }
+
+    input:focus {
+      border-color: #ff7a00;
+      box-shadow: 0 0 15px rgba(255,122,0,0.15);
     }
 
     button {
       width: 100%;
       padding: 15px;
+
       border: 0;
-      border-radius: 13px;
-      cursor: pointer;
+      border-radius: 14px;
+
+      color: white;
       font-size: 16px;
       font-weight: bold;
-      margin-top: 8px;
+
+      cursor: pointer;
+      margin-top: 12px;
     }
 
     .random {
-      background: #303c5e;
-      color: white;
+      background: #202b47;
+    }
+
+    .random:hover {
+      background: #293755;
     }
 
     .create {
-      background: linear-gradient(90deg, #ffb300, #ff6200);
-      color: white;
-      box-shadow: 0 8px 25px rgba(255,100,0,.25);
+      background:
+        linear-gradient(135deg, #ff9d00, #ff3d00);
+
+      box-shadow:
+        0 10px 25px rgba(255,80,0,0.2);
     }
 
-    #result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 13px;
-      background: #16213b;
+    .create:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .result {
       display: none;
+
+      margin-top: 20px;
+      padding: 20px;
+
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.25);
+
+      border-radius: 18px;
+    }
+
+    .player-name {
+      margin-top: 8px;
+      color: #d7def0;
     }
 
     .id {
-      color: #ffb300;
-      font-size: 25px;
+      margin-top: 12px;
+
+      font-size: 26px;
       font-weight: bold;
-      margin-top: 7px;
+
+      color: #ffd166;
+
+      letter-spacing: 2px;
     }
 
     .error {
-      color: #ff5c5c;
+      display: none;
+
       margin-top: 15px;
+      padding: 12px;
+
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+
+      color: #ff7b7b;
+      border-radius: 12px;
+    }
+
+    .footer {
+      margin-top: 22px;
+      color: #697590;
+      font-size: 12px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="box">
+  <div class="container">
 
-    <div class="logo">⚔️</div>
+    <div class="card">
 
-    <h1>BATTLE ARENA</h1>
+      <div class="logo">⚔️</div>
 
-    <div class="sub">
-      أنشئ حسابك وابدأ المعركة 🔥
-    </div>
+      <h1>BATTLE ARENA</h1>
 
-    <input
-      id="username"
-      type="text"
-      maxlength="16"
-      placeholder="اسم اللاعب"
-    >
-
-    <button class="random" onclick="randomName()">
-      🎲 اسم عشوائي
-    </button>
-
-    <button class="create" onclick="createAccount()">
-      🚀 إنشاء الحساب
-    </button>
-
-    <div id="result">
-      <div>🎉 تم إنشاء حسابك!</div>
-      <div id="playerName"></div>
-      <div class="id" id="playerId"></div>
-      <div style="color:#9da8c4;margin-top:5px">
-        هذا هو ID تاعك
+      <div class="sub">
+        أنشئ حسابك وابدأ المعركة 🔥
       </div>
-    </div>
 
-    <div id="error" class="error"></div>
+      <div class="online">
+        <span class="dot"></span>
+        السيرفر متصل
+      </div>
+
+      <input
+        id="username"
+        type="text"
+        maxlength="16"
+        placeholder="اسم اللاعب"
+        autocomplete="off"
+      >
+
+      <button
+        class="random"
+        onclick="randomName()"
+      >
+        🎲 اسم عشوائي
+      </button>
+
+      <button
+        id="createButton"
+        class="create"
+        onclick="createAccount()"
+      >
+        🚀 إنشاء الحساب
+      </button>
+
+      <div
+        id="result"
+        class="result"
+      >
+        <div>🎉 تم إنشاء حسابك!</div>
+
+        <div
+          id="playerName"
+          class="player-name"
+        ></div>
+
+        <div
+          id="playerId"
+          class="id"
+        ></div>
+
+        <div style="color:#9da8c4;margin-top:5px">
+          هذا هو ID تاعك
+        </div>
+      </div>
+
+      <div
+        id="error"
+        class="error"
+      ></div>
+
+      <div class="footer">
+        Battle Arena © 2026
+      </div>
+
+    </div>
 
   </div>
 
 <script>
 
-const names = [
-  "Shadow",
-  "Blaze",
-  "Nova",
-  "Ghost",
-  "Falcon",
-  "Titan",
-  "Viper",
-  "Storm",
-  "Raven",
-  "Hunter"
-];
+const usernameInput =
+  document.getElementById("username");
+
+const createButton =
+  document.getElementById("createButton");
+
+const result =
+  document.getElementById("result");
+
+const errorBox =
+  document.getElementById("error");
+
+
+// ================================
+// 🎲 RANDOM NAME
+// ================================
 
 function randomName() {
+
+  const names = [
+    "Shadow",
+    "DarkWolf",
+    "FireKing",
+    "BattleX",
+    "Warrior",
+    "Hunter",
+    "Ghost",
+    "BlidaX",
+    "Yahia",
+    "Dragon",
+    "Storm",
+    "Falcon",
+    "NightX",
+    "Titan"
+  ];
 
   const name =
     names[Math.floor(Math.random() * names.length)];
@@ -179,71 +322,136 @@ function randomName() {
   const number =
     Math.floor(100 + Math.random() * 900);
 
-  document.getElementById("username").value =
-    name + "_" + number;
+  usernameInput.value =
+    name + number;
 }
 
-function createAccount() {
 
-  let username =
-    document.getElementById("username").value.trim();
+// ================================
+// 🚀 CREATE ACCOUNT
+// ================================
 
-  // إذا اللاعب ما كتبش اسم، نعطيوه اسم عشوائي
+async function createAccount() {
+
+  const username =
+    usernameInput.value.trim();
+
+  errorBox.style.display = "none";
+  result.style.display = "none";
+
   if (!username) {
-    randomName();
-    username =
-      document.getElementById("username").value;
+
+    showError("❌ اكتب اسم اللاعب");
+
+    return;
   }
 
-  document.getElementById("error").textContent = "";
+  if (username.length < 3) {
 
-  fetch("/api/register", {
+    showError(
+      "❌ اسم اللاعب لازم يكون 3 حروف على الأقل"
+    );
 
-    method: "POST",
+    return;
+  }
 
-    headers: {
-      "Content-Type": "application/json"
-    },
+  createButton.disabled = true;
 
-    body: JSON.stringify({
-      username: username
-    })
+  createButton.textContent =
+    "⏳ جاري إنشاء الحساب...";
 
-  })
+  try {
 
-  .then(response => response.json())
+    const response =
+      await fetch("/api/register", {
 
-  .then(data => {
+        method: "POST",
 
-    if (!data.success) {
-      document.getElementById("error").textContent =
-        "❌ " + data.message;
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          username
+        })
+
+      });
+
+    const data =
+      await response.json();
+
+    if (!response.ok || !data.success) {
+
+      showError(
+        "❌ " +
+        (data.message ||
+        "فشل إنشاء الحساب")
+      );
+
       return;
     }
 
-    document.getElementById("result").style.display =
-      "block";
-
-    document.getElementById("playerName").textContent =
+    document.getElementById(
+      "playerName"
+    ).textContent =
       "👤 " + data.player.username;
 
-    document.getElementById("playerId").textContent =
-      data.player.playerId;
+    document.getElementById(
+      "playerId"
+    ).textContent =
+      "🆔 " + data.player.playerId;
 
-  })
+    result.style.display = "block";
 
-  .catch(error => {
+    usernameInput.value = "";
 
-    console.error(error);
+  } catch (error) {
 
-    document.getElementById("error").textContent =
-      "❌ صار خطأ في الاتصال بالسيرفر";
+    console.error(
+      "Register Error:",
+      error
+    );
 
-  });
+    showError(
+      "❌ تعذر الاتصال بالسيرفر"
+    );
+
+  } finally {
+
+    createButton.disabled = false;
+
+    createButton.textContent =
+      "🚀 إنشاء الحساب";
+  }
 }
 
-// اسم جاهز من البداية
-randomName();
+
+// ================================
+// ❌ ERROR
+// ================================
+
+function showError(message) {
+
+  errorBox.textContent = message;
+
+  errorBox.style.display = "block";
+}
+
+
+// ================================
+// ⌨️ ENTER
+// ================================
+
+usernameInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key === "Enter") {
+      createAccount();
+    }
+
+  }
+);
 
 </script>
 
