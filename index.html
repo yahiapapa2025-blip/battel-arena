@@ -1,459 +1,1050 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Battle Arena</title>
+<meta charset="UTF-8">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #26345c 0%, #10162b 35%, #060912 100%);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
+<title>Battle Arena</title>
 
-    .container {
-      width: 100%;
-      max-width: 460px;
-    }
+<style>
 
-    .card {
-      background: rgba(15, 22, 42, 0.94);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 28px;
-      padding: 30px;
-      box-shadow: 0 25px 70px rgba(0,0,0,0.55);
-      text-align: center;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .logo {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 15px;
+body {
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
+  margin: 0;
 
-      border-radius: 25px;
+  min-height: 100vh;
 
-      background:
-        linear-gradient(135deg, #ff9d00, #ff3d00);
+  font-family:
+    Arial,
+    sans-serif;
 
-      font-size: 48px;
+  background:
+    radial-gradient(
+      circle at top,
+      #26355f,
+      #090d18 65%
+    );
 
-      box-shadow:
-        0 0 35px rgba(255,100,0,0.35);
-    }
+  color: white;
 
-    h1 {
-      margin: 5px 0;
-      font-size: 32px;
-      letter-spacing: 1px;
-    }
+  display: flex;
 
-    .sub {
-      color: #aeb9d5;
-      margin: 10px 0 25px;
-    }
+  justify-content: center;
 
-    .online {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
+  align-items: center;
 
-      padding: 7px 13px;
-      border-radius: 20px;
+}
 
-      background: rgba(34,197,94,0.12);
-      color: #4ade80;
 
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
+.container {
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #22c55e;
-      box-shadow: 0 0 10px #22c55e;
-    }
+  width: 92%;
 
-    input {
-      width: 100%;
-      padding: 16px;
+  max-width: 430px;
 
-      border-radius: 14px;
-      border: 1px solid #303b5a;
+  background:
+    rgba(12, 17, 31, .94);
 
-      background: #0a1020;
-      color: white;
+  border:
+    1px solid
+    rgba(255,255,255,.1);
 
-      outline: none;
-      font-size: 16px;
+  border-radius: 24px;
 
-      text-align: center;
-    }
+  padding: 28px;
 
-    input:focus {
-      border-color: #ff7a00;
-      box-shadow: 0 0 15px rgba(255,122,0,0.15);
-    }
+  text-align: center;
 
-    button {
-      width: 100%;
-      padding: 15px;
+  box-shadow:
+    0 20px 70px
+    rgba(0,0,0,.5);
 
-      border: 0;
-      border-radius: 14px;
+}
 
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
 
-      cursor: pointer;
-      margin-top: 12px;
-    }
+.logo {
 
-    .random {
-      background: #202b47;
-    }
+  font-size: 65px;
 
-    .random:hover {
-      background: #293755;
-    }
+  margin-bottom: 5px;
 
-    .create {
-      background:
-        linear-gradient(135deg, #ff9d00, #ff3d00);
+}
 
-      box-shadow:
-        0 10px 25px rgba(255,80,0,0.2);
-    }
 
-    .create:hover {
-      transform: translateY(-1px);
-    }
+h1 {
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+  margin: 0;
 
-    .result {
-      display: none;
+  font-size: 30px;
 
-      margin-top: 20px;
-      padding: 20px;
+  letter-spacing: 2px;
 
-      background: rgba(34,197,94,0.08);
-      border: 1px solid rgba(34,197,94,0.25);
+}
 
-      border-radius: 18px;
-    }
 
-    .player-name {
-      margin-top: 8px;
-      color: #d7def0;
-    }
+.sub {
 
-    .id {
-      margin-top: 12px;
+  color: #aab4cc;
 
-      font-size: 26px;
-      font-weight: bold;
+  margin:
+    10px 0 22px;
 
-      color: #ffd166;
+}
 
-      letter-spacing: 2px;
-    }
 
-    .error {
-      display: none;
+input {
 
-      margin-top: 15px;
-      padding: 12px;
+  width: 100%;
 
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
+  padding: 15px;
 
-      color: #ff7b7b;
-      border-radius: 12px;
-    }
+  border-radius: 12px;
 
-    .footer {
-      margin-top: 22px;
-      color: #697590;
-      font-size: 12px;
-    }
-  </style>
+  border: 1px solid #394462;
+
+  background: #11182a;
+
+  color: white;
+
+  font-size: 16px;
+
+  outline: none;
+
+  text-align: center;
+
+}
+
+
+button {
+
+  width: 100%;
+
+  padding: 14px;
+
+  margin-top: 12px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+}
+
+
+.random {
+
+  background: #303b5b;
+
+}
+
+
+.create {
+
+  background:
+    linear-gradient(
+      135deg,
+      #ff7b00,
+      #ff3d00
+    );
+
+}
+
+
+.login {
+
+  background: #273352;
+
+}
+
+
+.result {
+
+  display: none;
+
+}
+
+
+.id {
+
+  font-size: 26px;
+
+  font-weight: bold;
+
+  color: #ffc107;
+
+  margin-top: 12px;
+
+}
+
+
+.key {
+
+  margin-top: 15px;
+
+  padding: 12px;
+
+  background: #0b1221;
+
+  border-radius: 10px;
+
+  word-break: break-all;
+
+  color: #63e6be;
+
+  font-family: monospace;
+
+}
+
+
+.warning {
+
+  color: #ffcc66;
+
+  font-size: 13px;
+
+  margin-top: 10px;
+
+}
+
+
+.error {
+
+  color: #ff6b6b;
+
+  margin-top: 15px;
+
+}
+
+
+.lobby {
+
+  display: none;
+
+}
+
+
+.lobby-card {
+
+  background: #11182a;
+
+  border-radius: 16px;
+
+  padding: 20px;
+
+  margin-top: 20px;
+
+}
+
+
+.stat {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  padding: 10px 0;
+
+  border-bottom:
+    1px solid #29334b;
+
+}
+
+
+.stat:last-child {
+
+  border-bottom: 0;
+
+}
+
+
+.badge {
+
+  color: #ffd43b;
+
+}
+
+
+</style>
+
 </head>
+
 
 <body>
 
-  <div class="container">
 
-    <div class="card">
+<div class="container">
 
-      <div class="logo">⚔️</div>
 
-      <h1>BATTLE ARENA</h1>
+<!-- ================================= -->
+<!-- CREATE -->
+<!-- ================================= -->
 
-      <div class="sub">
-        أنشئ حسابك وابدأ المعركة 🔥
-      </div>
+<div id="createScreen">
 
-      <div class="online">
-        <span class="dot"></span>
-        السيرفر متصل
-      </div>
+  <div class="logo">⚔️</div>
 
-      <input
-        id="username"
-        type="text"
-        maxlength="16"
-        placeholder="اسم اللاعب"
-        autocomplete="off"
-      >
+  <h1>BATTLE ARENA</h1>
 
-      <button
-        class="random"
-        onclick="randomName()"
-      >
-        🎲 اسم عشوائي
-      </button>
+  <div class="sub">
+    أنشئ حسابك وابدأ المعركة 🔥
+  </div>
 
-      <button
-        id="createButton"
-        class="create"
-        onclick="createAccount()"
-      >
-        🚀 إنشاء الحساب
-      </button>
 
-      <div
-        id="result"
-        class="result"
-      >
-        <div>🎉 تم إنشاء حسابك!</div>
+  <input
+    id="username"
+    type="text"
+    maxlength="16"
+    placeholder="اسم اللاعب"
+  >
 
-        <div
-          id="playerName"
-          class="player-name"
-        ></div>
 
-        <div
-          id="playerId"
-          class="id"
-        ></div>
+  <button
+    class="random"
+    onclick="randomName()"
+  >
+    🎲 اسم عشوائي
+  </button>
 
-        <div style="color:#9da8c4;margin-top:5px">
-          هذا هو ID تاعك
-        </div>
-      </div>
 
-      <div
-        id="error"
-        class="error"
-      ></div>
+  <button
+    class="create"
+    onclick="createAccount()"
+  >
+    🚀 إنشاء الحساب
+  </button>
 
-      <div class="footer">
-        Battle Arena © 2026
-      </div>
 
-    </div>
+  <div
+    id="createError"
+    class="error"
+  ></div>
+
+</div>
+
+
+<!-- ================================= -->
+<!-- ACCOUNT KEY -->
+<!-- ================================= -->
+
+<div
+  id="keyScreen"
+  class="result"
+>
+
+  <div class="logo">🎉</div>
+
+  <h2>
+    تم إنشاء حسابك!
+  </h2>
+
+  <div id="newPlayerName"></div>
+
+  <div
+    class="id"
+    id="newPlayerId"
+  ></div>
+
+
+  <div class="key">
+    <span id="accountKey"></span>
+  </div>
+
+
+  <div class="warning">
+
+    ⚠️ هذا Account Key مهم.
+    احتفظ به في مكان آمن للدخول إلى حسابك
+    من جهاز آخر.
 
   </div>
 
+
+  <button
+    class="create"
+    onclick="enterLobby()"
+  >
+    🎮 دخول للّوبي
+  </button>
+
+</div>
+
+
+<!-- ================================= -->
+<!-- LOGIN -->
+<!-- ================================= -->
+
+<div
+  id="loginScreen"
+  class="result"
+>
+
+  <div class="logo">🔐</div>
+
+  <h2>
+    مرحبًا بك من جديد
+  </h2>
+
+  <div class="sub">
+    أدخل Account Key تاع حسابك
+  </div>
+
+
+  <input
+    id="accountKeyInput"
+    type="password"
+    placeholder="Account Key"
+  >
+
+
+  <button
+    class="login"
+    onclick="loginAccount()"
+  >
+    🔓 دخول
+  </button>
+
+
+  <div
+    id="loginError"
+    class="error"
+  ></div>
+
+</div>
+
+
+<!-- ================================= -->
+<!-- LOBBY -->
+<!-- ================================= -->
+
+<div
+  id="lobbyScreen"
+  class="lobby"
+>
+
+  <div class="logo">
+    ⚔️
+  </div>
+
+  <h1>
+    BATTLE ARENA
+  </h1>
+
+  <div class="sub">
+    مرحبًا بك في اللّوبي 🔥
+  </div>
+
+
+  <div class="lobby-card">
+
+
+    <h2 id="lobbyName">
+      Player
+    </h2>
+
+
+    <div class="stat">
+
+      <span>
+        🆔 ID
+      </span>
+
+      <strong id="lobbyId">
+        -
+      </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+      <span>
+        💎 Diamonds
+      </span>
+
+      <strong id="lobbyDiamonds">
+        0
+      </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+      <span>
+        🪙 Gold
+      </span>
+
+      <strong id="lobbyGold">
+        0
+      </strong>
+
+    </div>
+
+
+    <div class="stat">
+
+      <span>
+        ⭐ Level
+      </span>
+
+      <strong id="lobbyLevel">
+        1
+      </strong>
+
+    </div>
+
+
+    <div
+      class="stat"
+      id="developerRow"
+      style="display:none"
+    >
+
+      <span>
+        👑
+      </span>
+
+      <strong class="badge">
+        DEVELOPER
+      </strong>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+</div>
+
+
 <script>
 
-const usernameInput =
-  document.getElementById("username");
 
-const createButton =
-  document.getElementById("createButton");
-
-const result =
-  document.getElementById("result");
-
-const errorBox =
-  document.getElementById("error");
-
-
-// ================================
+// ======================================
 // 🎲 RANDOM NAME
-// ================================
+// ======================================
 
 function randomName() {
 
   const names = [
-    "Shadow",
+
+    "ShadowX",
+
+    "YahiaPro",
+
     "DarkWolf",
+
     "FireKing",
-    "BattleX",
-    "Warrior",
-    "Hunter",
-    "Ghost",
-    "BlidaX",
-    "Yahia",
-    "Dragon",
-    "Storm",
-    "Falcon",
+
+    "GhostX",
+
+    "BattleGod",
+
     "NightX",
-    "Titan"
+
+    "DragonX",
+
+    "Falcon7",
+
+    "WarriorX"
+
   ];
 
+
   const name =
-    names[Math.floor(Math.random() * names.length)];
+    names[
+      Math.floor(
+        Math.random() *
+        names.length
+      )
+    ];
 
-  const number =
-    Math.floor(100 + Math.random() * 900);
 
-  usernameInput.value =
-    name + number;
+  document
+    .getElementById("username")
+    .value = name;
+
 }
 
 
-// ================================
+// ======================================
+// 💾 SAVE PLAYER
+// ======================================
+
+function savePlayer(player) {
+
+  localStorage.setItem(
+    "battleArenaPlayer",
+    JSON.stringify(player)
+  );
+
+}
+
+
+// ======================================
+// 📦 GET SAVED PLAYER
+// ======================================
+
+function getSavedPlayer() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(
+        "battleArenaPlayer"
+      )
+    );
+
+  } catch {
+
+    return null;
+
+  }
+
+}
+
+
+// ======================================
+// 🎮 SHOW LOBBY
+// ======================================
+
+function showLobby(player) {
+
+  document
+    .getElementById("createScreen")
+    .style.display = "none";
+
+
+  document
+    .getElementById("keyScreen")
+    .style.display = "none";
+
+
+  document
+    .getElementById("loginScreen")
+    .style.display = "none";
+
+
+  document
+    .getElementById("lobbyScreen")
+    .style.display = "block";
+
+
+  document
+    .getElementById("lobbyName")
+    .textContent =
+      player.username;
+
+
+  document
+    .getElementById("lobbyId")
+    .textContent =
+      player.playerId;
+
+
+  document
+    .getElementById("lobbyDiamonds")
+    .textContent =
+      player.diamonds || 0;
+
+
+  document
+    .getElementById("lobbyGold")
+    .textContent =
+      player.gold || 0;
+
+
+  document
+    .getElementById("lobbyLevel")
+    .textContent =
+      player.level || 1;
+
+
+  if (player.developerBadge) {
+
+    document
+      .getElementById(
+        "developerRow"
+      )
+      .style.display = "flex";
+
+  }
+
+}
+
+
+// ======================================
 // 🚀 CREATE ACCOUNT
-// ================================
+// ======================================
 
 async function createAccount() {
 
   const username =
-    usernameInput.value.trim();
+    document
+      .getElementById("username")
+      .value
+      .trim();
 
-  errorBox.style.display = "none";
-  result.style.display = "none";
+
+  const error =
+    document
+      .getElementById("createError");
+
+
+  error.textContent = "";
+
 
   if (!username) {
 
-    showError("❌ اكتب اسم اللاعب");
+    error.textContent =
+      "اكتب اسم اللاعب";
 
     return;
+
   }
 
-  if (username.length < 3) {
-
-    showError(
-      "❌ اسم اللاعب لازم يكون 3 حروف على الأقل"
-    );
-
-    return;
-  }
-
-  createButton.disabled = true;
-
-  createButton.textContent =
-    "⏳ جاري إنشاء الحساب...";
 
   try {
 
     const response =
-      await fetch("/api/register", {
+      await fetch(
+        "/api/register",
+        {
 
-        method: "POST",
+          method: "POST",
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+          headers: {
 
-        body: JSON.stringify({
-          username
-        })
+            "Content-Type":
+              "application/json"
 
-      });
+          },
+
+          body: JSON.stringify({
+
+            username
+
+          })
+
+        }
+      );
+
 
     const data =
       await response.json();
 
-    if (!response.ok || !data.success) {
 
-      showError(
-        "❌ " +
-        (data.message ||
-        "فشل إنشاء الحساب")
-      );
+    if (!data.success) {
+
+      error.textContent =
+        data.message ||
+        "فشل إنشاء الحساب";
 
       return;
+
     }
 
-    document.getElementById(
-      "playerName"
-    ).textContent =
-      "👤 " + data.player.username;
 
-    document.getElementById(
-      "playerId"
-    ).textContent =
-      "🆔 " + data.player.playerId;
+    // نحفظ الحساب محليًا
+    savePlayer(
+      data.player
+    );
 
-    result.style.display = "block";
 
-    usernameInput.value = "";
+    document
+      .getElementById(
+        "createScreen"
+      )
+      .style.display = "none";
+
+
+    document
+      .getElementById(
+        "keyScreen"
+      )
+      .style.display = "block";
+
+
+    document
+      .getElementById(
+        "newPlayerName"
+      )
+      .textContent =
+        data.player.username;
+
+
+    document
+      .getElementById(
+        "newPlayerId"
+      )
+      .textContent =
+        "ID: " +
+        data.player.playerId;
+
+
+    document
+      .getElementById(
+        "accountKey"
+      )
+      .textContent =
+        data.accountKey;
+
+
+    // نخزن المفتاح في الجهاز
+    localStorage.setItem(
+      "battleArenaAccountKey",
+      data.accountKey
+    );
+
 
   } catch (error) {
 
-    console.error(
-      "Register Error:",
-      error
-    );
+    console.error(error);
 
-    showError(
-      "❌ تعذر الاتصال بالسيرفر"
-    );
+    document
+      .getElementById(
+        "createError"
+      )
+      .textContent =
+        "تعذر الاتصال بالسيرفر";
 
-  } finally {
-
-    createButton.disabled = false;
-
-    createButton.textContent =
-      "🚀 إنشاء الحساب";
   }
+
 }
 
 
-// ================================
-// ❌ ERROR
-// ================================
+// ======================================
+// 🔐 LOGIN
+// ======================================
 
-function showError(message) {
+async function loginAccount() {
 
-  errorBox.textContent = message;
+  const accountKey =
+    document
+      .getElementById(
+        "accountKeyInput"
+      )
+      .value
+      .trim();
 
-  errorBox.style.display = "block";
-}
+
+  const error =
+    document
+      .getElementById(
+        "loginError"
+      );
 
 
-// ================================
-// ⌨️ ENTER
-// ================================
+  error.textContent = "";
 
-usernameInput.addEventListener(
-  "keydown",
-  function(event) {
 
-    if (event.key === "Enter") {
-      createAccount();
+  if (!accountKey) {
+
+    error.textContent =
+      "أدخل Account Key";
+
+    return;
+
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/login",
+        {
+
+          method: "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body: JSON.stringify({
+
+            accountKey
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.success) {
+
+      error.textContent =
+        data.message ||
+        "فشل تسجيل الدخول";
+
+      return;
+
     }
 
+
+    savePlayer(
+      data.player
+    );
+
+
+    localStorage.setItem(
+      "battleArenaAccountKey",
+      accountKey
+    );
+
+
+    showLobby(
+      data.player
+    );
+
+
+  } catch {
+
+    error.textContent =
+      "تعذر الاتصال بالسيرفر";
+
   }
-);
+
+}
+
+
+// ======================================
+// 🎮 ENTER LOBBY
+// ======================================
+
+function enterLobby() {
+
+  const player =
+    getSavedPlayer();
+
+
+  if (!player) {
+
+    location.reload();
+
+    return;
+
+  }
+
+
+  showLobby(player);
+
+}
+
+
+// ======================================
+// 🔄 START
+// ======================================
+
+async function startGame() {
+
+  const savedPlayer =
+    getSavedPlayer();
+
+
+  const savedKey =
+    localStorage.getItem(
+      "battleArenaAccountKey"
+    );
+
+
+  // إذا عندو حساب محفوظ + مفتاح
+  if (
+    savedPlayer &&
+    savedKey
+  ) {
+
+    // نتحقق من السيرفر
+    try {
+
+      const response =
+        await fetch(
+          "/api/login",
+          {
+
+            method: "POST",
+
+            headers: {
+
+              "Content-Type":
+                "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+              accountKey:
+                savedKey
+
+            })
+
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (data.success) {
+
+        savePlayer(
+          data.player
+        );
+
+        showLobby(
+          data.player
+        );
+
+        return;
+
+      }
+
+    } catch {}
+
+  }
+
+
+  // إذا ما عندوش حساب
+  document
+    .getElementById(
+      "createScreen"
+    )
+    .style.display = "block";
+
+}
+
+
+startGame();
 
 </script>
 
 </body>
+
 </html>
