@@ -7,7 +7,7 @@
 
 <meta
   name="viewport"
-  content="width=device-width, initial-scale=1.0"
+  content="width=device-width,initial-scale=1.0"
 >
 
 <title>Battle Arena</title>
@@ -19,681 +19,472 @@
 }
 
 body {
-
   margin: 0;
-
-  min-height: 100vh;
-
-  font-family:
-    Arial,
-    sans-serif;
-
   background:
     radial-gradient(
       circle at top,
-      #26355f,
-      #090d18 65%
+      #26345c,
+      #070a12 70%
     );
-
   color: white;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
 
+.screen {
+  min-height: 100vh;
   display: flex;
-
-  justify-content: center;
-
   align-items: center;
-
+  justify-content: center;
 }
 
-
-.container {
-
+.panel {
   width: 92%;
-
   max-width: 430px;
-
-  background:
-    rgba(12, 17, 31, .94);
-
-  border:
-    1px solid
-    rgba(255,255,255,.1);
-
-  border-radius: 24px;
-
-  padding: 28px;
-
+  background: rgba(10,15,27,.95);
+  border-radius: 22px;
+  padding: 25px;
   text-align: center;
-
-  box-shadow:
-    0 20px 70px
-    rgba(0,0,0,.5);
-
 }
-
 
 .logo {
-
-  font-size: 65px;
-
-  margin-bottom: 5px;
-
+  font-size: 58px;
 }
-
 
 h1 {
-
-  margin: 0;
-
-  font-size: 30px;
-
-  letter-spacing: 2px;
-
+  margin: 5px 0;
 }
-
 
 .sub {
-
-  color: #aab4cc;
-
-  margin:
-    10px 0 22px;
-
+  color: #aab4c9;
+  margin: 10px 0 20px;
 }
-
 
 input {
-
   width: 100%;
-
   padding: 15px;
-
-  border-radius: 12px;
-
-  border: 1px solid #394462;
-
   background: #11182a;
-
   color: white;
-
-  font-size: 16px;
-
+  border: 1px solid #35415d;
+  border-radius: 12px;
   outline: none;
-
   text-align: center;
-
+  font-size: 16px;
 }
-
 
 button {
-
   width: 100%;
-
   padding: 14px;
-
-  margin-top: 12px;
-
-  border: 0;
-
-  border-radius: 12px;
-
-  color: white;
-
-  font-size: 16px;
-
-  font-weight: bold;
-
-  cursor: pointer;
-
-}
-
-
-.random {
-
-  background: #303b5b;
-
-}
-
-
-.create {
-
-  background:
-    linear-gradient(
-      135deg,
-      #ff7b00,
-      #ff3d00
-    );
-
-}
-
-
-.login {
-
-  background: #273352;
-
-}
-
-
-.result {
-
-  display: none;
-
-}
-
-
-.id {
-
-  font-size: 26px;
-
-  font-weight: bold;
-
-  color: #ffc107;
-
-  margin-top: 12px;
-
-}
-
-
-.key {
-
-  margin-top: 15px;
-
-  padding: 12px;
-
-  background: #0b1221;
-
-  border-radius: 10px;
-
-  word-break: break-all;
-
-  color: #63e6be;
-
-  font-family: monospace;
-
-}
-
-
-.warning {
-
-  color: #ffcc66;
-
-  font-size: 13px;
-
   margin-top: 10px;
-
+  border: 0;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
 }
 
+.orange {
+  background: linear-gradient(135deg,#ff8500,#ff3d00);
+}
+
+.blue {
+  background: #293657;
+}
 
 .error {
-
-  color: #ff6b6b;
-
-  margin-top: 15px;
-
+  color: #ff6565;
+  margin-top: 12px;
 }
 
-
-.lobby {
-
-  display: none;
-
-}
-
-
-.lobby-card {
-
-  background: #11182a;
-
-  border-radius: 16px;
-
-  padding: 20px;
-
-  margin-top: 20px;
-
-}
-
-
-.stat {
-
+.character-choice {
   display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
 
+.character-choice button {
+  flex: 1;
+  background: #172039;
+  border: 2px solid transparent;
+}
+
+.character-choice button.selected {
+  border-color: #ff9800;
+  background: #263453;
+}
+
+#lobby {
+  display: none;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.topbar {
+  position: absolute;
+  z-index: 10;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  display: flex;
   justify-content: space-between;
-
-  padding: 10px 0;
-
-  border-bottom:
-    1px solid #29334b;
-
+  align-items: center;
 }
 
-
-.stat:last-child {
-
-  border-bottom: 0;
-
+.player-info {
+  background: rgba(7,11,20,.85);
+  padding: 8px 13px;
+  border-radius: 12px;
 }
 
-
-.badge {
-
-  color: #ffd43b;
-
+.currencies {
+  display: flex;
+  gap: 8px;
 }
 
+.currency {
+  background: rgba(7,11,20,.9);
+  padding: 9px 13px;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.diamond {
+  color: #55c8ff;
+}
+
+.gold {
+  color: #ffd34e;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+}
+
+.menu {
+  position: absolute;
+  z-index: 20;
+  bottom: 25px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  gap: 8px;
+}
+
+.menu button {
+  background: rgba(8,12,22,.9);
+  border: 1px solid #34415e;
+  margin: 0;
+}
+
+.play {
+  position: absolute;
+  z-index: 20;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 190px;
+  background: linear-gradient(135deg,#ff9800,#ff3d00);
+  box-shadow: 0 8px 30px rgba(255,90,0,.35);
+}
+
+.character-name {
+  position: absolute;
+  z-index: 15;
+  bottom: 170px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(5,8,15,.8);
+  padding: 8px 18px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
 
 </style>
 
 </head>
 
-
 <body>
 
 
-<div class="container">
-
-
-<!-- ================================= -->
+<!-- ========================= -->
 <!-- CREATE -->
-<!-- ================================= -->
+<!-- ========================= -->
 
-<div id="createScreen">
+<div
+  id="createScreen"
+  class="screen"
+>
 
-  <div class="logo">⚔️</div>
+<div class="panel">
 
-  <h1>BATTLE ARENA</h1>
+<div class="logo">⚔️</div>
 
-  <div class="sub">
-    أنشئ حسابك وابدأ المعركة 🔥
-  </div>
+<h1>BATTLE ARENA</h1>
 
+<div class="sub">
+أنشئ حسابك واختر شخصيتك
+</div>
 
-  <input
-    id="username"
-    type="text"
-    maxlength="16"
-    placeholder="اسم اللاعب"
-  >
-
-
-  <button
-    class="random"
-    onclick="randomName()"
-  >
-    🎲 اسم عشوائي
-  </button>
+<input
+  id="username"
+  maxlength="16"
+  placeholder="اسم اللاعب"
+>
 
 
-  <button
-    class="create"
-    onclick="createAccount()"
-  >
-    🚀 إنشاء الحساب
-  </button>
+<div class="character-choice">
 
+<button
+  id="childBtn"
+  onclick="selectCharacter(1)"
+>
+👦 طفل
+</button>
 
-  <div
-    id="createError"
-    class="error"
-  ></div>
+<button
+  id="girlBtn"
+  onclick="selectCharacter(2)"
+>
+👧 طفلة
+</button>
 
 </div>
 
 
-<!-- ================================= -->
+<button
+  class="orange"
+  onclick="createAccount()"
+>
+🚀 إنشاء الحساب
+</button>
+
+
+<div
+  id="createError"
+  class="error"
+></div>
+
+</div>
+
+</div>
+
+
+<!-- ========================= -->
 <!-- ACCOUNT KEY -->
-<!-- ================================= -->
+<!-- ========================= -->
 
 <div
   id="keyScreen"
-  class="result"
+  class="screen"
+  style="display:none"
 >
 
-  <div class="logo">🎉</div>
+<div class="panel">
 
-  <h2>
-    تم إنشاء حسابك!
-  </h2>
+<div class="logo">🎉</div>
 
-  <div id="newPlayerName"></div>
+<h2>تم إنشاء الحساب</h2>
 
-  <div
-    class="id"
-    id="newPlayerId"
-  ></div>
+<div id="newName"></div>
 
+<h2 id="newId"></h2>
 
-  <div class="key">
-    <span id="accountKey"></span>
-  </div>
-
-
-  <div class="warning">
-
-    ⚠️ هذا Account Key مهم.
-    احتفظ به في مكان آمن للدخول إلى حسابك
-    من جهاز آخر.
-
-  </div>
-
-
-  <button
-    class="create"
-    onclick="enterLobby()"
-  >
-    🎮 دخول للّوبي
-  </button>
-
-</div>
-
-
-<!-- ================================= -->
-<!-- LOGIN -->
-<!-- ================================= -->
+<p>
+Account Key
+</p>
 
 <div
-  id="loginScreen"
-  class="result"
+  id="newKey"
+  style="
+  background:#080d18;
+  padding:14px;
+  border-radius:10px;
+  word-break:break-all;
+  color:#63e6be;
+  font-family:monospace;
+  "
+></div>
+
+<p
+  style="
+  color:#ffcc66;
+  font-size:13px
+  "
 >
+احتفظ بالمفتاح، تحتاجه للدخول من جهاز آخر.
+</p>
 
-  <div class="logo">🔐</div>
+<button
+  class="orange"
+  onclick="openLobby()"
+>
+🎮 دخول للّوبي
+</button>
 
-  <h2>
-    مرحبًا بك من جديد
-  </h2>
-
-  <div class="sub">
-    أدخل Account Key تاع حسابك
-  </div>
-
-
-  <input
-    id="accountKeyInput"
-    type="password"
-    placeholder="Account Key"
-  >
-
-
-  <button
-    class="login"
-    onclick="loginAccount()"
-  >
-    🔓 دخول
-  </button>
-
-
-  <div
-    id="loginError"
-    class="error"
-  ></div>
+</div>
 
 </div>
 
 
-<!-- ================================= -->
+<!-- ========================= -->
 <!-- LOBBY -->
-<!-- ================================= -->
+<!-- ========================= -->
+
+<div id="lobby">
+
+<div class="topbar">
+
+<div class="player-info">
+
+<div id="lobbyName">
+Player
+</div>
 
 <div
-  id="lobbyScreen"
-  class="lobby"
+  style="
+  color:#9da8c4;
+  font-size:12px
+  "
 >
-
-  <div class="logo">
-    ⚔️
-  </div>
-
-  <h1>
-    BATTLE ARENA
-  </h1>
-
-  <div class="sub">
-    مرحبًا بك في اللّوبي 🔥
-  </div>
-
-
-  <div class="lobby-card">
-
-
-    <h2 id="lobbyName">
-      Player
-    </h2>
-
-
-    <div class="stat">
-
-      <span>
-        🆔 ID
-      </span>
-
-      <strong id="lobbyId">
-        -
-      </strong>
-
-    </div>
-
-
-    <div class="stat">
-
-      <span>
-        💎 Diamonds
-      </span>
-
-      <strong id="lobbyDiamonds">
-        0
-      </strong>
-
-    </div>
-
-
-    <div class="stat">
-
-      <span>
-        🪙 Gold
-      </span>
-
-      <strong id="lobbyGold">
-        0
-      </strong>
-
-    </div>
-
-
-    <div class="stat">
-
-      <span>
-        ⭐ Level
-      </span>
-
-      <strong id="lobbyLevel">
-        1
-      </strong>
-
-    </div>
-
-
-    <div
-      class="stat"
-      id="developerRow"
-      style="display:none"
-    >
-
-      <span>
-        👑
-      </span>
-
-      <strong class="badge">
-        DEVELOPER
-      </strong>
-
-    </div>
-
-
-  </div>
+ID: <span id="lobbyId">-</span>
+</div>
 
 </div>
 
 
+<div class="currencies">
+
+<div class="currency diamond">
+💎 <span id="diamonds">0</span>
 </div>
 
+<div class="currency gold">
+🪙 <span id="gold">0</span>
+</div>
+
+</div>
+
+</div>
+
+
+<div id="scene"></div>
+
+
+<div
+  class="character-name"
+  id="characterName"
+>
+Child
+</div>
+
+
+<button
+  class="play"
+  onclick="playGame()"
+>
+PLAY
+</button>
+
+
+<div class="menu">
+
+<button onclick="charactersPage()">
+الشخصية
+</button>
+
+<button>
+المتجر
+</button>
+
+<button>
+المخزن
+</button>
+
+<button>
+الرتبة
+</button>
+
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.min.js"></script>
 
 <script>
 
 
 // ======================================
-// 🎲 RANDOM NAME
+// PLAYER
+// ======================================
+
+let player = null;
+
+let selectedCharacter = 1;
+
+
+// ======================================
+// CHARACTER SELECT
+// ======================================
+
+function selectCharacter(id) {
+
+  selectedCharacter = id;
+
+  document
+    .getElementById("childBtn")
+    .classList.toggle(
+      "selected",
+      id === 1
+    );
+
+  document
+    .getElementById("girlBtn")
+    .classList.toggle(
+      "selected",
+      id === 2
+    );
+
+}
+
+
+// الافتراضي
+selectCharacter(1);
+
+
+// ======================================
+// RANDOM NAME
 // ======================================
 
 function randomName() {
 
   const names = [
-
-    "ShadowX",
-
-    "YahiaPro",
-
-    "DarkWolf",
-
-    "FireKing",
-
-    "GhostX",
-
-    "BattleGod",
-
-    "NightX",
-
-    "DragonX",
-
-    "Falcon7",
-
-    "WarriorX"
-
+    "Shadow",
+    "Yahia",
+    "Warrior",
+    "Dragon",
+    "Falcon",
+    "Ghost",
+    "Hunter"
   ];
-
-
-  const name =
-    names[
-      Math.floor(
-        Math.random() *
-        names.length
-      )
-    ];
-
 
   document
     .getElementById("username")
-    .value = name;
+    .value =
+      names[
+        Math.floor(
+          Math.random() * names.length
+        )
+      ];
 
 }
 
 
 // ======================================
-// 💾 SAVE PLAYER
-// ======================================
-
-function savePlayer(player) {
-
-  localStorage.setItem(
-    "battleArenaPlayer",
-    JSON.stringify(player)
-  );
-
-}
-
-
-// ======================================
-// 📦 GET SAVED PLAYER
-// ======================================
-
-function getSavedPlayer() {
-
-  try {
-
-    return JSON.parse(
-      localStorage.getItem(
-        "battleArenaPlayer"
-      )
-    );
-
-  } catch {
-
-    return null;
-
-  }
-
-}
-
-
-// ======================================
-// 🎮 SHOW LOBBY
-// ======================================
-
-function showLobby(player) {
-
-  document
-    .getElementById("createScreen")
-    .style.display = "none";
-
-
-  document
-    .getElementById("keyScreen")
-    .style.display = "none";
-
-
-  document
-    .getElementById("loginScreen")
-    .style.display = "none";
-
-
-  document
-    .getElementById("lobbyScreen")
-    .style.display = "block";
-
-
-  document
-    .getElementById("lobbyName")
-    .textContent =
-      player.username;
-
-
-  document
-    .getElementById("lobbyId")
-    .textContent =
-      player.playerId;
-
-
-  document
-    .getElementById("lobbyDiamonds")
-    .textContent =
-      player.diamonds || 0;
-
-
-  document
-    .getElementById("lobbyGold")
-    .textContent =
-      player.gold || 0;
-
-
-  document
-    .getElementById("lobbyLevel")
-    .textContent =
-      player.level || 1;
-
-
-  if (player.developerBadge) {
-
-    document
-      .getElementById(
-        "developerRow"
-      )
-      .style.display = "flex";
-
-  }
-
-}
-
-
-// ======================================
-// 🚀 CREATE ACCOUNT
+// CREATE
 // ======================================
 
 async function createAccount() {
@@ -703,7 +494,6 @@ async function createAccount() {
       .getElementById("username")
       .value
       .trim();
-
 
   const error =
     document
@@ -733,15 +523,16 @@ async function createAccount() {
           method: "POST",
 
           headers: {
-
             "Content-Type":
               "application/json"
-
           },
 
           body: JSON.stringify({
 
-            username
+            username,
+
+            characterId:
+              selectedCharacter
 
           })
 
@@ -756,17 +547,25 @@ async function createAccount() {
     if (!data.success) {
 
       error.textContent =
-        data.message ||
-        "فشل إنشاء الحساب";
+        data.message;
 
       return;
 
     }
 
 
-    // نحفظ الحساب محليًا
-    savePlayer(
-      data.player
+    player = data.player;
+
+
+    localStorage.setItem(
+      "battleArenaPlayer",
+      JSON.stringify(player)
+    );
+
+
+    localStorage.setItem(
+      "battleArenaAccountKey",
+      data.accountKey
     );
 
 
@@ -781,51 +580,40 @@ async function createAccount() {
       .getElementById(
         "keyScreen"
       )
-      .style.display = "block";
+      .style.display = "flex";
 
 
     document
       .getElementById(
-        "newPlayerName"
+        "newName"
       )
       .textContent =
-        data.player.username;
+        player.username;
 
 
     document
       .getElementById(
-        "newPlayerId"
+        "newId"
       )
       .textContent =
         "ID: " +
-        data.player.playerId;
+        player.playerId;
 
 
     document
       .getElementById(
-        "accountKey"
+        "newKey"
       )
       .textContent =
         data.accountKey;
 
 
-    // نخزن المفتاح في الجهاز
-    localStorage.setItem(
-      "battleArenaAccountKey",
-      data.accountKey
-    );
+  } catch (err) {
 
+    console.error(err);
 
-  } catch (error) {
-
-    console.error(error);
-
-    document
-      .getElementById(
-        "createError"
-      )
-      .textContent =
-        "تعذر الاتصال بالسيرفر";
+    error.textContent =
+      "تعذر الاتصال بالسيرفر";
 
   }
 
@@ -833,34 +621,721 @@ async function createAccount() {
 
 
 // ======================================
-// 🔐 LOGIN
+// OPEN LOBBY
 // ======================================
 
-async function loginAccount() {
+function openLobby() {
 
-  const accountKey =
-    document
-      .getElementById(
-        "accountKeyInput"
-      )
-      .value
-      .trim();
+  if (!player) {
 
-
-  const error =
-    document
-      .getElementById(
-        "loginError"
+    player =
+      JSON.parse(
+        localStorage.getItem(
+          "battleArenaPlayer"
+        )
       );
 
+  }
 
-  error.textContent = "";
+
+  if (!player) {
+
+    location.reload();
+
+    return;
+
+  }
 
 
-  if (!accountKey) {
+  document
+    .getElementById(
+      "keyScreen"
+    )
+    .style.display = "none";
 
-    error.textContent =
-      "أدخل Account Key";
+
+  document
+    .getElementById(
+      "lobby"
+    )
+    .style.display = "block";
+
+
+  updateLobby();
+
+
+  create3DScene(
+    player.characterId
+  );
+
+}
+
+
+// ======================================
+// UPDATE LOBBY
+// ======================================
+
+function updateLobby() {
+
+  document
+    .getElementById(
+      "lobbyName"
+    )
+    .textContent =
+      player.username;
+
+
+  document
+    .getElementById(
+      "lobbyId"
+    )
+    .textContent =
+      player.playerId;
+
+
+  document
+    .getElementById(
+      "diamonds"
+    )
+    .textContent =
+      player.diamonds || 0;
+
+
+  document
+    .getElementById(
+      "gold"
+    )
+    .textContent =
+      player.gold || 0;
+
+
+  document
+    .getElementById(
+      "characterName"
+    )
+    .textContent =
+      player.characterId === 1
+        ? "CHILD"
+        : "GIRL";
+
+}
+
+
+// ======================================
+// THREE.JS
+// ======================================
+
+let scene;
+let camera;
+let renderer;
+let character;
+let clock;
+
+
+function create3DScene(characterId) {
+
+  const container =
+    document.getElementById(
+      "scene"
+    );
+
+
+  container.innerHTML = "";
+
+
+  scene =
+    new THREE.Scene();
+
+
+  scene.background =
+    new THREE.Color(
+      0x101827
+    );
+
+
+  camera =
+    new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth /
+      window.innerHeight,
+      0.1,
+      100
+    );
+
+
+  camera.position.set(
+    0,
+    1.65,
+    5
+  );
+
+
+  renderer =
+    new THREE.WebGLRenderer({
+      antialias: true
+    });
+
+
+  renderer.setPixelRatio(
+    Math.min(
+      window.devicePixelRatio,
+      2
+    )
+  );
+
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+  );
+
+
+  container.appendChild(
+    renderer.domElement
+  );
+
+
+  // LIGHT
+
+  const ambient =
+    new THREE.HemisphereLight(
+      0xffffff,
+      0x27334d,
+      2
+    );
+
+  scene.add(ambient);
+
+
+  const light =
+    new THREE.DirectionalLight(
+      0xffffff,
+      3
+    );
+
+  light.position.set(
+    3,
+    5,
+    4
+  );
+
+  scene.add(light);
+
+
+  // FLOOR
+
+  const floor =
+    new THREE.Mesh(
+
+      new THREE.CylinderGeometry(
+        2.2,
+        2.2,
+        .15,
+        64
+      ),
+
+      new THREE.MeshStandardMaterial({
+        color: 0x1d293d,
+        roughness: .8
+      })
+
+    );
+
+
+  floor.position.y =
+    -0.08;
+
+  scene.add(floor);
+
+
+  character =
+    createCharacter(
+      characterId
+    );
+
+
+  scene.add(character);
+
+
+  clock =
+    new THREE.Clock();
+
+
+  animate();
+
+
+}
+
+
+// ======================================
+// 3D CHARACTER
+// ======================================
+
+function createCharacter(id) {
+
+  const group =
+    new THREE.Group();
+
+
+  const isGirl =
+    id === 2;
+
+
+  // COLORS
+
+  const skin =
+    new THREE.MeshStandardMaterial({
+      color: isGirl
+        ? 0xf0b28f
+        : 0xe4a47d
+    });
+
+
+  const shirt =
+    new THREE.MeshStandardMaterial({
+      color: isGirl
+        ? 0xc85cff
+        : 0x3498ff
+    });
+
+
+  const pants =
+    new THREE.MeshStandardMaterial({
+      color: isGirl
+        ? 0x28345c
+        : 0x202a3d
+    });
+
+
+  const hair =
+    new THREE.MeshStandardMaterial({
+      color: isGirl
+        ? 0x3a2017
+        : 0x24170f
+    });
+
+
+  // BODY
+
+  const body =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        .42,
+        .8,
+        8,
+        16
+      ),
+      shirt
+    );
+
+  body.position.y =
+    1.05;
+
+  group.add(body);
+
+
+  // HEAD
+
+  const head =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .38,
+        32,
+        24
+      ),
+      skin
+    );
+
+  head.position.y =
+    1.95;
+
+  group.add(head);
+
+
+  // HAIR
+
+  const hairMesh =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .40,
+        32,
+        20,
+        0,
+        Math.PI * 2,
+        0,
+        Math.PI * .55
+      ),
+      hair
+    );
+
+  hairMesh.position.y =
+    2.08;
+
+  group.add(hairMesh);
+
+
+  // EYES
+
+  const eyeMaterial =
+    new THREE.MeshStandardMaterial({
+      color: 0x111111
+    });
+
+
+  const eye1 =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .045,
+        12,
+        12
+      ),
+      eyeMaterial
+    );
+
+
+  const eye2 =
+    eye1.clone();
+
+
+  eye1.position.set(
+    -.13,
+    2.0,
+    .34
+  );
+
+
+  eye2.position.set(
+    .13,
+    2.0,
+    .34
+  );
+
+
+  group.add(
+    eye1,
+    eye2
+  );
+
+
+  // NOSE
+
+  const nose =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .055,
+        12,
+        12
+      ),
+      skin
+    );
+
+
+  nose.position.set(
+    0,
+    1.91,
+    .37
+  );
+
+
+  group.add(nose);
+
+
+  // MOUTH
+
+  const mouth =
+    new THREE.Mesh(
+      new THREE.TorusGeometry(
+        .09,
+        .018,
+        8,
+        20,
+        Math.PI
+      ),
+      new THREE.MeshStandardMaterial({
+        color: 0x8b3040
+      })
+    );
+
+
+  mouth.rotation.x =
+    Math.PI;
+
+  mouth.position.set(
+    0,
+    1.78,
+    .36
+  );
+
+
+  group.add(mouth);
+
+
+  // ARMS
+
+  const armGeometry =
+    new THREE.CapsuleGeometry(
+      .12,
+      .58,
+      6,
+      12
+    );
+
+
+  const leftArm =
+    new THREE.Mesh(
+      armGeometry,
+      shirt
+    );
+
+
+  const rightArm =
+    new THREE.Mesh(
+      armGeometry,
+      shirt
+    );
+
+
+  leftArm.position.set(
+    -.52,
+    1.1,
+    0
+  );
+
+
+  rightArm.position.set(
+    .52,
+    1.1,
+    0
+  );
+
+
+  leftArm.rotation.z =
+    -.12;
+
+  rightArm.rotation.z =
+    .12;
+
+
+  group.add(
+    leftArm,
+    rightArm
+  );
+
+
+  // LEGS
+
+  const legGeometry =
+    new THREE.CapsuleGeometry(
+      .14,
+      .62,
+      6,
+      12
+    );
+
+
+  const leftLeg =
+    new THREE.Mesh(
+      legGeometry,
+      pants
+    );
+
+
+  const rightLeg =
+    new THREE.Mesh(
+      legGeometry,
+      pants
+    );
+
+
+  leftLeg.position.set(
+    -.19,
+    .38,
+    0
+  );
+
+
+  rightLeg.position.set(
+    .19,
+    .38,
+    0
+  );
+
+
+  group.add(
+    leftLeg,
+    rightLeg
+  );
+
+
+  // SHOES
+
+  const shoeMaterial =
+    new THREE.MeshStandardMaterial({
+      color: 0x101318
+    });
+
+
+  const shoe1 =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .18,
+        16,
+        12
+      ),
+      shoeMaterial
+    );
+
+
+  const shoe2 =
+    shoe1.clone();
+
+
+  shoe1.scale.set(
+    1.25,
+    .55,
+    1.55
+  );
+
+
+  shoe2.scale.copy(
+    shoe1.scale
+  );
+
+
+  shoe1.position.set(
+    -.19,
+    .04,
+    .06
+  );
+
+
+  shoe2.position.set(
+    .19,
+    .04,
+    .06
+  );
+
+
+  group.add(
+    shoe1,
+    shoe2
+  );
+
+
+  return group;
+
+}
+
+
+// ======================================
+// ANIMATION
+// ======================================
+
+function animate() {
+
+  requestAnimationFrame(
+    animate
+  );
+
+
+  if (character) {
+
+    const t =
+      clock.getElapsedTime();
+
+
+    character.rotation.y =
+      Math.sin(t * .45) * .12;
+
+
+    character.position.y =
+      Math.sin(t * 2) * .015;
+
+  }
+
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+}
+
+
+// ======================================
+// RESIZE
+// ======================================
+
+window.addEventListener(
+  "resize",
+  () => {
+
+    if (!camera || !renderer)
+      return;
+
+
+    camera.aspect =
+      window.innerWidth /
+      window.innerHeight;
+
+
+    camera.updateProjectionMatrix();
+
+
+    renderer.setSize(
+      window.innerWidth,
+      window.innerHeight
+    );
+
+  }
+);
+
+
+// ======================================
+// PLAY
+// ======================================
+
+function playGame() {
+
+  alert(
+    "🎮 طور اللعب راح نضيفوه في المرحلة الجاية!"
+  );
+
+}
+
+
+// ======================================
+// CHARACTER PAGE
+// ======================================
+
+function charactersPage() {
+
+  alert(
+    "صفحة الشخصيات راح نوسعها بالشخصيات والسكنات."
+  );
+
+}
+
+
+// ======================================
+// AUTO LOGIN
+// ======================================
+
+async function autoLogin() {
+
+  const key =
+    localStorage.getItem(
+      "battleArenaAccountKey"
+    );
+
+
+  if (!key) {
+
+    document
+      .getElementById(
+        "createScreen"
+      )
+      .style.display = "flex";
 
     return;
 
@@ -877,15 +1352,13 @@ async function loginAccount() {
           method: "POST",
 
           headers: {
-
             "Content-Type":
               "application/json"
-
           },
 
           body: JSON.stringify({
 
-            accountKey
+            accountKey: key
 
           })
 
@@ -899,149 +1372,44 @@ async function loginAccount() {
 
     if (!data.success) {
 
-      error.textContent =
-        data.message ||
-        "فشل تسجيل الدخول";
+      localStorage.removeItem(
+        "battleArenaAccountKey"
+      );
+
+      localStorage.removeItem(
+        "battleArenaPlayer"
+      );
 
       return;
 
     }
 
 
-    savePlayer(
-      data.player
-    );
+    player =
+      data.player;
 
 
     localStorage.setItem(
-      "battleArenaAccountKey",
-      accountKey
+      "battleArenaPlayer",
+      JSON.stringify(player)
     );
 
 
-    showLobby(
-      data.player
+    openLobby();
+
+
+  } catch (error) {
+
+    console.log(
+      "Auto login failed"
     );
-
-
-  } catch {
-
-    error.textContent =
-      "تعذر الاتصال بالسيرفر";
 
   }
 
 }
 
 
-// ======================================
-// 🎮 ENTER LOBBY
-// ======================================
-
-function enterLobby() {
-
-  const player =
-    getSavedPlayer();
-
-
-  if (!player) {
-
-    location.reload();
-
-    return;
-
-  }
-
-
-  showLobby(player);
-
-}
-
-
-// ======================================
-// 🔄 START
-// ======================================
-
-async function startGame() {
-
-  const savedPlayer =
-    getSavedPlayer();
-
-
-  const savedKey =
-    localStorage.getItem(
-      "battleArenaAccountKey"
-    );
-
-
-  // إذا عندو حساب محفوظ + مفتاح
-  if (
-    savedPlayer &&
-    savedKey
-  ) {
-
-    // نتحقق من السيرفر
-    try {
-
-      const response =
-        await fetch(
-          "/api/login",
-          {
-
-            method: "POST",
-
-            headers: {
-
-              "Content-Type":
-                "application/json"
-
-            },
-
-            body: JSON.stringify({
-
-              accountKey:
-                savedKey
-
-            })
-
-          }
-        );
-
-
-      const data =
-        await response.json();
-
-
-      if (data.success) {
-
-        savePlayer(
-          data.player
-        );
-
-        showLobby(
-          data.player
-        );
-
-        return;
-
-      }
-
-    } catch {}
-
-  }
-
-
-  // إذا ما عندوش حساب
-  document
-    .getElementById(
-      "createScreen"
-    )
-    .style.display = "block";
-
-}
-
-
-startGame();
+autoLogin();
 
 </script>
 
