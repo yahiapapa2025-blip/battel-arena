@@ -1,13 +1,14 @@
 {
   "name": "battle-arena",
   "version": "1.0.0",
-  "description": "Battle Arena Server",
+  "description": "Battle Arena Game Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "mongoose": "^8.18.0"
+    "mongoose": "^8.10.0"
   }
 }
