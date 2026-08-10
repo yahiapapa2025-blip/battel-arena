@@ -14,6 +14,7 @@ const playerSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      minlength: 3,
       maxlength: 16
     },
 
@@ -24,26 +25,41 @@ const playerSchema = new mongoose.Schema(
       index: true
     },
 
+    // =========================
+    // CHARACTER
+    // =========================
+
     characterId: {
       type: Number,
       enum: [1, 2],
       default: 1
     },
 
+    // =========================
+    // CURRENCIES
+    // =========================
+
     diamonds: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0
     },
 
     gold: {
       type: Number,
-      default: 0
+      default: 0,
+      min: 0
     },
 
     level: {
       type: Number,
-      default: 1
+      default: 1,
+      min: 1
     },
+
+    // =========================
+    // BADGES
+    // =========================
 
     developerBadge: {
       type: Boolean,
@@ -55,19 +71,54 @@ const playerSchema = new mongoose.Schema(
       default: false
     },
 
+    // =========================
+    // BAN
+    // =========================
+
     banned: {
       type: Boolean,
       default: false
     },
+
+    // =========================
+    // INVENTORY
+    // =========================
+
+    ownedSkins: {
+      type: [String],
+      default: []
+    },
+
+    ownedWeapons: {
+      type: [String],
+      default: []
+    },
+
+    equippedSkin: {
+      type: String,
+      default: null
+    },
+
+    equippedWeaponSkin: {
+      type: String,
+      default: null
+    },
+
+    // =========================
+    // DATE
+    // =========================
 
     createdAt: {
       type: Date,
       default: Date.now
     }
   },
+
   {
     versionKey: false
   }
 );
 
-module.exports = mongoose.model("Player", playerSchema);
+module.exports =
+  mongoose.models.Player ||
+  mongoose.model("Player", playerSchema);
