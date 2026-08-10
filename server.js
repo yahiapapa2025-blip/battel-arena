@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const Player = require("./models/player");
 
 const app = express();
+
 const PORT = process.env.PORT || 10000;
 
 app.use(express.json());
@@ -11,9 +12,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 
-// ================================
-// 🔐 ACCOUNT KEY
-// ================================
+// ==========================================
+// ACCOUNT KEY
+// ==========================================
 
 function hashKey(key) {
   return crypto
@@ -33,9 +34,9 @@ function createAccountKey() {
 }
 
 
-// ================================
-// 🆔 PLAYER ID
-// ================================
+// ==========================================
+// PLAYER ID
+// ==========================================
 
 async function createPlayerId() {
   let id;
@@ -43,8 +44,7 @@ async function createPlayerId() {
 
   while (exists) {
     id = Math.floor(
-      1000000 +
-      Math.random() * 9000000
+      1000000 + Math.random() * 9000000
     );
 
     exists = await Player.exists({
@@ -56,16 +56,15 @@ async function createPlayerId() {
 }
 
 
-// ================================
-// 🗄️ MONGODB
-// ================================
+// ==========================================
+// DATABASE
+// ==========================================
 
 async function connectDB() {
   try {
-
     if (!process.env.MONGODB_URI) {
       console.log("❌ MONGODB_URI missing");
-      return;
+      return false;
     }
 
     await mongoose.connect(
@@ -74,6 +73,8 @@ async function connectDB() {
 
     console.log("✅ MongoDB Connected");
 
+    return true;
+
   } catch (error) {
 
     console.log(
@@ -81,15 +82,16 @@ async function connectDB() {
       error.message
     );
 
+    return false;
   }
 }
 
 connectDB();
 
 
-// ================================
-// 🏠 HOME
-// ================================
+// ==========================================
+// HOME
+// ==========================================
 
 app.get("/", (req, res) => {
   res.sendFile(
@@ -98,15 +100,17 @@ app.get("/", (req, res) => {
 });
 
 
-// ================================
-// 🆕 REGISTER
-// ================================
+// ==========================================
+// REGISTER
+// ==========================================
 
 app.post("/api/register", async (req, res) => {
 
   try {
 
-    if (mongoose.connection.readyState !== 1) {
+    if (
+      mongoose.connection.readyState !== 1
+    ) {
       return res.status(503).json({
         success: false,
         message: "قاعدة البيانات غير متصلة"
@@ -114,12 +118,9 @@ app.post("/api/register", async (req, res) => {
     }
 
     const username =
-      String(req.body.username || "")
-        .trim();
-
-    const characterId =
-      Number(req.body.characterId);
-
+      String(
+        req.body.username || ""
+      ).trim();
 
     if (!username) {
       return res.status(400).json({
@@ -128,28 +129,30 @@ app.post("/api/register", async (req, res) => {
       });
     }
 
-
     if (username.length < 3) {
       return res.status(400).json({
         success: false,
-        message: "الاسم لازم يكون 3 حروف على الأقل"
+        message:
+          "الاسم لازم يكون 3 حروف على الأقل"
       });
     }
 
-
-    if (![1, 2].includes(characterId)) {
+    if (username.length > 16) {
       return res.status(400).json({
         success: false,
-        message: "الشخصية غير صالحة"
+        message:
+          "الاسم أقصى حاجة 16 حرف"
       });
     }
-
 
     const existing =
       await Player.findOne({
-        username
+        username: {
+          $regex:
+            `^${escapeRegex(username)}$`,
+          $options: "i"
+        }
       });
-
 
     if (existing) {
       return res.status(409).json({
@@ -157,7 +160,6 @@ app.post("/api/register", async (req, res) => {
         message: "اسم اللاعب مستعمل"
       });
     }
-
 
     const playerId =
       await createPlayerId();
@@ -168,6 +170,10 @@ app.post("/api/register", async (req, res) => {
     const accountKeyHash =
       hashKey(accountKey);
 
+    /*
+      الحساب يبدأ بالشخصية 1.
+      تغيير الشخصية يتم من صفحة الشخصيات.
+    */
 
     const player =
       await Player.create({
@@ -178,81 +184,62 @@ app.post("/api/register", async (req, res) => {
 
         accountKeyHash,
 
-        characterId,
+        characterId: 1,
 
         diamonds: 0,
 
         gold: 0,
 
-        level: 1
+        level: 1,
+
+        developerBadge: false,
+
+        partnershipBanner: false,
+
+        banned: false
 
       });
 
-
     console.log(
-      `👤 Created: ${username} | ${playerId} | Character ${characterId}`
+      `👤 Created: ${username} | ${playerId}`
     );
-
 
     res.json({
 
       success: true,
 
-      message: "تم إنشاء الحساب",
+      message:
+        "تم إنشاء الحساب",
 
       accountKey,
 
-      player: {
-
-        playerId:
-          player.playerId,
-
-        username:
-          player.username,
-
-        characterId:
-          player.characterId,
-
-        diamonds:
-          player.diamonds,
-
-        gold:
-          player.gold,
-
-        level:
-          player.level,
-
-        developerBadge:
-          player.developerBadge
-
-      }
+      player:
+        publicPlayer(player)
 
     });
-
 
   } catch (error) {
 
     console.log(
       "❌ Register Error:",
-      error.message
+      error
     );
 
     res.status(500).json({
 
       success: false,
 
-      message: "فشل إنشاء الحساب"
+      message:
+        "فشل إنشاء الحساب"
 
     });
-
   }
-
 });
 
 
-// ================================
-// 🔑 LOGIN
-// ================================
+// ==========================================
+// LOGIN
+// ==========================================
 
 app.post("/api/login", async (req, res) => {
 
@@ -263,195 +250,339 @@ app.post("/api/login", async (req, res) => {
         req.body.accountKey || ""
       ).trim();
 
-
     if (!accountKey) {
+
       return res.status(400).json({
         success: false,
-        message: "أدخل Account Key"
+        message:
+          "أدخل Account Key"
       });
-    }
 
+    }
 
     const hash =
       hashKey(accountKey);
-
 
     const player =
       await Player.findOne({
         accountKeyHash: hash
       });
 
-
     if (!player) {
+
       return res.status(401).json({
         success: false,
-        message: "Account Key غير صحيح"
+        message:
+          "Account Key غير صحيح"
       });
-    }
 
+    }
 
     if (player.banned) {
+
       return res.status(403).json({
         success: false,
-        message: "الحساب محظور"
+        message:
+          "الحساب محظور"
       });
-    }
 
+    }
 
     res.json({
 
       success: true,
 
-      player: {
-
-        playerId:
-          player.playerId,
-
-        username:
-          player.username,
-
-        characterId:
-          player.characterId,
-
-        diamonds:
-          player.diamonds,
-
-        gold:
-          player.gold,
-
-        level:
-          player.level,
-
-        developerBadge:
-          player.developerBadge,
-
-        partnershipBanner:
-          player.partnershipBanner
-
-      }
+      player:
+        publicPlayer(player)
 
     });
-
 
   } catch (error) {
 
     console.log(
       "❌ Login Error:",
-      error.message
+      error
     );
 
     res.status(500).json({
 
       success: false,
 
-      message: "خطأ في تسجيل الدخول"
+      message:
+        "خطأ في تسجيل الدخول"
 
     });
-
   }
-
 });
 
 
-// ================================
-// 👤 PLAYER
-// ================================
+// ==========================================
+// GET PLAYER
+// ==========================================
 
-app.get("/api/player/:id", async (req, res) => {
+app.get(
+  "/api/player/:id",
+  async (req, res) => {
 
-  try {
+    try {
 
-    const id =
-      Number(req.params.id);
+      const id =
+        Number(req.params.id);
 
+      if (!Number.isInteger(id)) {
 
-    const player =
-      await Player.findOne({
-        playerId: id
+        return res.status(400).json({
+          success: false,
+          message:
+            "ID غير صالح"
+        });
+
+      }
+
+      const player =
+        await Player.findOne({
+          playerId: id
+        });
+
+      if (!player) {
+
+        return res.status(404).json({
+          success: false,
+          message:
+            "اللاعب غير موجود"
+        });
+
+      }
+
+      res.json({
+
+        success: true,
+
+        player:
+          publicPlayer(player)
+
       });
 
+    } catch (error) {
 
-    if (!player) {
+      console.log(error);
 
-      return res.status(404).json({
+      res.status(500).json({
+
         success: false,
-        message: "اللاعب غير موجود"
+
+        message:
+          "Server Error"
+
+      });
+    }
+  }
+);
+
+
+// ==========================================
+// CHANGE CHARACTER
+// ==========================================
+
+app.post(
+  "/api/player/:id/character",
+  async (req, res) => {
+
+    try {
+
+      const id =
+        Number(req.params.id);
+
+      const accountKey =
+        String(
+          req.body.accountKey || ""
+        ).trim();
+
+      const characterId =
+        Number(
+          req.body.characterId
+        );
+
+      if (!accountKey) {
+
+        return res.status(401).json({
+          success: false,
+          message:
+            "Account Key مفقود"
+        });
+
+      }
+
+      if (![1, 2].includes(characterId)) {
+
+        return res.status(400).json({
+          success: false,
+          message:
+            "الشخصية غير صالحة"
+        });
+
+      }
+
+      const player =
+        await Player.findOne({
+          playerId: id,
+          accountKeyHash:
+            hashKey(accountKey)
+        });
+
+      if (!player) {
+
+        return res.status(401).json({
+          success: false,
+          message:
+            "الحساب غير صحيح"
+        });
+
+      }
+
+      if (player.banned) {
+
+        return res.status(403).json({
+          success: false,
+          message:
+            "الحساب محظور"
+        });
+
+      }
+
+      player.characterId =
+        characterId;
+
+      await player.save();
+
+      console.log(
+        `🎭 Character changed: ${player.username} -> ${characterId}`
+      );
+
+      res.json({
+
+        success: true,
+
+        message:
+          "تم تغيير الشخصية",
+
+        player:
+          publicPlayer(player)
+
       });
 
-    }
+    } catch (error) {
 
+      console.log(
+        "❌ Character Error:",
+        error
+      );
+
+      res.status(500).json({
+
+        success: false,
+
+        message:
+          "فشل تغيير الشخصية"
+
+      });
+    }
+  }
+);
+
+
+// ==========================================
+// HEALTH
+// ==========================================
+
+app.get(
+  "/api/health",
+  (req, res) => {
 
     res.json({
 
       success: true,
 
-      player: {
+      server: "ONLINE",
 
-        playerId:
-          player.playerId,
+      mongodb:
+        mongoose.connection.readyState === 1
+          ? "CONNECTED"
+          : "DISCONNECTED",
 
-        username:
-          player.username,
-
-        characterId:
-          player.characterId,
-
-        diamonds:
-          player.diamonds,
-
-        gold:
-          player.gold,
-
-        level:
-          player.level,
-
-        developerBadge:
-          player.developerBadge
-
-      }
+      characters: [
+        {
+          id: 1,
+          name: "Character 1",
+          file:
+            "/models/characters/634230045_my_avatar.glb"
+        },
+        {
+          id: 2,
+          name: "Character 2",
+          file:
+            "/models/characters/sunny_leone_creacter_3d_model.glb"
+        }
+      ]
 
     });
-
-
-  } catch (error) {
-
-    res.status(500).json({
-
-      success: false,
-      message: "Server Error"
-
-    });
-
   }
-
-});
-
-
-// ================================
-// ❤️ HEALTH
-// ================================
-
-app.get("/api/health", (req, res) => {
-
-  res.json({
-
-    success: true,
-
-    server: "ONLINE",
-
-    mongodb:
-      mongoose.connection.readyState === 1
-        ? "CONNECTED"
-        : "DISCONNECTED"
-
-  });
-
-});
+);
 
 
-// ================================
-// 🚀 START
-// ================================
+// ==========================================
+// PUBLIC PLAYER DATA
+// ==========================================
+
+function publicPlayer(player) {
+
+  return {
+
+    playerId:
+      player.playerId,
+
+    username:
+      player.username,
+
+    characterId:
+      player.characterId || 1,
+
+    diamonds:
+      player.diamonds || 0,
+
+    gold:
+      player.gold || 0,
+
+    level:
+      player.level || 1,
+
+    developerBadge:
+      !!player.developerBadge,
+
+    partnershipBanner:
+      !!player.partnershipBanner
+
+  };
+}
+
+
+// ==========================================
+// ESCAPE REGEX
+// ==========================================
+
+function escapeRegex(text) {
+
+  return text.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    "\\$&"
+  );
+
+}
+
+
+// ==========================================
+// START
+// ==========================================
 
 app.listen(
   PORT,
