@@ -1,76 +1,109 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Battle Arena - Match</title>
 
-<title>Battle Arena</title>
+    <link rel="stylesheet" href="style.css">
 
-<style>
-
-html,body{
-margin:0;
-overflow:hidden;
-background:#000;
-font-family:Arial;
-}
-
-#game{
-width:100vw;
-height:100vh;
-}
-
-#crosshair{
-position:absolute;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
-font-size:32px;
-color:white;
-user-select:none;
-z-index:10;
-}
-
-#hud{
-position:absolute;
-left:20px;
-top:20px;
-color:white;
-z-index:10;
-font-size:22px;
-}
-
-#hp{
-margin-top:10px;
-}
-
-</style>
-
-<script type="importmap">
-{
-"imports":{
-"three":"https://unpkg.com/three@0.179.1/build/three.module.js"
-}
-}
-</script>
-
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 
 <body>
 
-<div id="hud">
-Battle Arena
-<div id="hp">
-❤️ 200
-</div>
-</div>
-
-<div id="crosshair">
-+
-</div>
-
 <div id="game"></div>
+
+<div id="hud">
+
+    <div class="player-info">
+        👤 <span id="username">Loading...</span>
+    </div>
+
+    <div class="stats">
+        <span>💎 <b id="diamonds">0</b></span>
+        <span>🪙 <b id="gold">0</b></span>
+        <span>⭐ Lv.<b id="level">1</b></span>
+    </div>
+
+    <div class="combat-hud">
+
+        <div class="health">
+            ❤️
+
+            <div class="health-bar">
+                <div id="healthFill"></div>
+            </div>
+
+            <b id="healthText">100</b>
+        </div>
+
+        <div class="ammo">
+            🔫 <span id="ammoText">30 / 30</span>
+        </div>
+
+    </div>
+
+    <div class="crosshair"></div>
+
+    <div class="controls">
+        WASD حركة | Shift جري | Mouse نظر | Click إطلاق | R تلقيم
+    </div>
+
+</div>
+
+<script>
+const PLAYER_ID = "100001";
+
+async function loadPlayer() {
+
+    try {
+
+        const response = await fetch(
+            `/game/player/${PLAYER_ID}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Server Error");
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error("Player Not Found");
+        }
+
+        document.getElementById("username").textContent =
+            data.username + (data.developerBadge ? " 🛡️" : "");
+
+        document.getElementById("diamonds").textContent =
+            data.diamonds;
+
+        document.getElementById("gold").textContent =
+            data.gold;
+
+        document.getElementById("level").textContent =
+            data.level;
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById("username").textContent =
+            "Offline";
+    }
+}
+
+loadPlayer();
+</script>
 
 <script type="module" src="js/game.js"></script>
 
