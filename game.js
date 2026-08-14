@@ -1,4 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
 
 // =====================================================
 // SCENE
@@ -10,8 +11,8 @@ scene.background = new THREE.Color(0x87ceeb);
 
 scene.fog = new THREE.Fog(
     0x87ceeb,
-    60,
-    300
+    80,
+    500
 );
 
 // =====================================================
@@ -22,7 +23,7 @@ const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1500
 );
 
 // =====================================================
@@ -43,6 +44,7 @@ renderer.setPixelRatio(
 );
 
 renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 document
     .getElementById("game")
@@ -55,28 +57,104 @@ document
 const skyLight = new THREE.HemisphereLight(
     0xffffff,
     0x557755,
-    1.4
+    1.5
 );
 
 scene.add(skyLight);
 
 const sun = new THREE.DirectionalLight(
     0xffffff,
-    1.8
+    2
 );
 
 sun.position.set(
     60,
-    100,
+    120,
     50
 );
 
 sun.castShadow = true;
 
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+
 scene.add(sun);
 
 // =====================================================
-// GROUND
+// MAP
+// =====================================================
+
+const mapLoader = new GLTFLoader();
+
+let gameMap = null;
+
+mapLoader.load(
+    "public/maps/drive_for_speed_-_map.glb",
+
+    (gltf) => {
+
+        gameMap = gltf.scene;
+
+        gameMap.position.set(
+            0,
+            0,
+            0
+        );
+
+        gameMap.scale.set(
+            1,
+            1,
+            1
+        );
+
+        gameMap.traverse(
+            (object) => {
+
+                if (object.isMesh) {
+
+                    object.castShadow = true;
+                    object.receiveShadow = true;
+
+                    if (object.material) {
+                        object.material.needsUpdate = true;
+                    }
+                }
+            }
+        );
+
+        scene.add(gameMap);
+
+        console.log(
+            "✅ Battle Arena map loaded!"
+        );
+    },
+
+    (progress) => {
+
+        if (progress.total > 0) {
+
+            const percent =
+                Math.round(
+                    (progress.loaded / progress.total) * 100
+                );
+
+            console.log(
+                `🗺️ Map loading: ${percent}%`
+            );
+        }
+    },
+
+    (error) => {
+
+        console.error(
+            "❌ Map loading failed:",
+            error
+        );
+    }
+);
+
+// =====================================================
+// FALLBACK GROUND
 // =====================================================
 
 const ground = new THREE.Mesh(
@@ -168,159 +246,12 @@ weapon.position.set(
 camera.add(weapon);
 
 // =====================================================
-// BUILDINGS
-// =====================================================
-
-function createBuilding(
-    x,
-    z,
-    width,
-    height,
-    depth
-) {
-
-    const building =
-        new THREE.Mesh(
-            new THREE.BoxGeometry(
-                width,
-                height,
-                depth
-            ),
-
-            new THREE.MeshStandardMaterial({
-                color: 0xb0b0b0
-            })
-        );
-
-    building.position.set(
-        x,
-        height / 2,
-        z
-    );
-
-    building.castShadow = true;
-    building.receiveShadow = true;
-
-    scene.add(building);
-}
-
-createBuilding(
-    -25,
-    -20,
-    18,
-    8,
-    18
-);
-
-createBuilding(
-    25,
-    -20,
-    18,
-    10,
-    18
-);
-
-createBuilding(
-    -30,
-    25,
-    20,
-    7,
-    15
-);
-
-createBuilding(
-    30,
-    25,
-    20,
-    9,
-    15
-);
-
-// =====================================================
-// TREES
-// =====================================================
-
-function createTree(
-    x,
-    z
-) {
-
-    const trunk =
-        new THREE.Mesh(
-            new THREE.CylinderGeometry(
-                0.35,
-                0.45,
-                3,
-                8
-            ),
-
-            new THREE.MeshStandardMaterial({
-                color: 0x704214
-            })
-        );
-
-    trunk.position.set(
-        x,
-        1.5,
-        z
-    );
-
-    trunk.castShadow = true;
-
-    scene.add(trunk);
-
-    const leaves =
-        new THREE.Mesh(
-            new THREE.SphereGeometry(
-                2.2,
-                12,
-                12
-            ),
-
-            new THREE.MeshStandardMaterial({
-                color: 0x176b2c
-            })
-        );
-
-    leaves.position.set(
-        x,
-        4,
-        z
-    );
-
-    leaves.castShadow = true;
-
-    scene.add(leaves);
-}
-
-[
-    [-15, 5],
-    [15, 5],
-    [-20, 18],
-    [20, 18],
-    [-10, -15],
-    [10, -15],
-    [-25, 8],
-    [25, 8]
-].forEach(
-    position => {
-        createTree(
-            position[0],
-            position[1]
-        );
-    }
-);
-
-// =====================================================
 // ENEMIES
 // =====================================================
 
 const enemies = [];
 
-function createEnemy(
-    x,
-    z
-) {
+function createEnemy(x, z) {
 
     const enemy =
         new THREE.Group();
@@ -377,16 +308,18 @@ function createEnemy(
         z
     );
 
-    enemy.userData.hp = 100;
+    enemy.userData.hp =
+        100;
 
-    enemy.userData.dead = false;
+    enemy.userData.dead =
+        false;
 
     scene.add(enemy);
 
     enemies.push(enemy);
 }
 
-// أعداء البداية
+// Initial enemies
 
 createEnemy(
     0,
@@ -416,17 +349,25 @@ const keys = {};
 
 window.addEventListener(
     "keydown",
-    event => {
+    (event) => {
 
         keys[
             event.key.toLowerCase()
         ] = true;
+
+        // RELOAD
+        if (
+            event.key.toLowerCase() === "r"
+        ) {
+
+            reload();
+        }
     }
 );
 
 window.addEventListener(
     "keyup",
-    event => {
+    (event) => {
 
         keys[
             event.key.toLowerCase()
@@ -439,7 +380,6 @@ window.addEventListener(
 // =====================================================
 
 let yaw = 0;
-
 let pitch = 0;
 
 const mouseSensitivity =
@@ -447,12 +387,13 @@ const mouseSensitivity =
 
 document.addEventListener(
     "mousemove",
-    event => {
+    (event) => {
 
         if (
             document.pointerLockElement !==
             renderer.domElement
         ) {
+
             return;
         }
 
@@ -508,7 +449,6 @@ function updateMovement() {
         );
 
     let forward = 0;
-
     let right = 0;
 
     if (keys["w"]) {
@@ -531,6 +471,9 @@ function updateMovement() {
         forward === 0 &&
         right === 0
     ) {
+
+        player.position.y = 1.7;
+
         return;
     }
 
@@ -541,7 +484,6 @@ function updateMovement() {
         );
 
     forward /= length;
-
     right /= length;
 
     const speed =
@@ -552,7 +494,6 @@ function updateMovement() {
     const distance =
         speed * delta;
 
-    // الاتجاه الأمامي
     const forwardVector =
         new THREE.Vector3(
             0,
@@ -569,7 +510,6 @@ function updateMovement() {
         player.rotation.y
     );
 
-    // الاتجاه الجانبي
     const rightVector =
         new THREE.Vector3(
             1,
@@ -598,7 +538,7 @@ function updateMovement() {
         )
     );
 
-    // حدود الخريطة
+    // Map limits
     player.position.x =
         THREE.MathUtils.clamp(
             player.position.x,
@@ -626,13 +566,32 @@ const raycaster =
 
 let ammo = 30;
 
+const maxAmmo = 30;
+
+function updateAmmoHUD() {
+
+    const ammoText =
+        document.getElementById(
+            "ammoText"
+        );
+
+    if (ammoText) {
+
+        ammoText.textContent =
+            `${ammo} / ${maxAmmo}`;
+    }
+}
+
 function shoot() {
 
     if (ammo <= 0) {
+
         return;
     }
 
     ammo--;
+
+    updateAmmoHUD();
 
     raycaster.setFromCamera(
         new THREE.Vector2(
@@ -651,11 +610,12 @@ function shoot() {
         if (
             enemy.userData.dead
         ) {
+
             continue;
         }
 
         enemy.traverse(
-            object => {
+            (object) => {
 
                 if (
                     object.isMesh
@@ -678,6 +638,7 @@ function shoot() {
     if (
         hits.length === 0
     ) {
+
         return;
     }
 
@@ -688,10 +649,12 @@ function shoot() {
         hit.userData.enemy;
 
     if (!enemy) {
+
         return;
     }
 
-    enemy.userData.hp -= 34;
+    enemy.userData.hp -=
+        34;
 
     if (
         enemy.userData.hp <= 0
@@ -704,16 +667,57 @@ function shoot() {
 }
 
 // =====================================================
+// RELOAD
+// =====================================================
+
+let reloading = false;
+
+function reload() {
+
+    if (reloading) {
+        return;
+    }
+
+    if (ammo === maxAmmo) {
+        return;
+    }
+
+    reloading = true;
+
+    console.log(
+        "🔄 Reloading..."
+    );
+
+    setTimeout(
+        () => {
+
+            ammo =
+                maxAmmo;
+
+            reloading =
+                false;
+
+            updateAmmoHUD();
+
+            console.log(
+                "🔫 Reloaded!"
+            );
+
+        },
+        1200
+    );
+}
+
+// =====================================================
 // KILL ENEMY
 // =====================================================
 
-function killEnemy(
-    enemy
-) {
+function killEnemy(enemy) {
 
     if (
         enemy.userData.dead
     ) {
+
         return;
     }
 
@@ -726,9 +730,7 @@ function killEnemy(
     const startTime =
         performance.now();
 
-    function fall(
-        time
-    ) {
+    function fall(time) {
 
         const progress =
             Math.min(
@@ -795,7 +797,6 @@ function killEnemy(
 function spawnEnemy() {
 
     let x;
-
     let z;
 
     do {
@@ -838,6 +839,7 @@ function updateEnemies() {
         if (
             enemy.userData.dead
         ) {
+
             continue;
         }
 
@@ -885,7 +887,7 @@ function updateEnemies() {
 
 window.addEventListener(
     "mousedown",
-    event => {
+    (event) => {
 
         if (
             event.button === 0 &&
@@ -939,4 +941,14 @@ function animate() {
     );
 }
 
+// =====================================================
+// START
+// =====================================================
+
+updateAmmoHUD();
+
 animate();
+
+console.log(
+    "🎮 Battle Arena started!"
+);
