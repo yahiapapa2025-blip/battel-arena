@@ -1,5 +1,5 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
-import { GLTFLoader } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 // =====================================================
 // SCENE
@@ -44,28 +44,31 @@ renderer.setPixelRatio(
 );
 
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
 
 document
     .getElementById("game")
     .appendChild(renderer.domElement);
 
 // =====================================================
-// LIGHTS
+// LIGHTING
 // =====================================================
 
-const skyLight = new THREE.HemisphereLight(
-    0xffffff,
-    0x557755,
-    1.5
-);
+const skyLight =
+    new THREE.HemisphereLight(
+        0xffffff,
+        0x557755,
+        1.5
+    );
 
 scene.add(skyLight);
 
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    2
-);
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2
+    );
 
 sun.position.set(
     60,
@@ -84,16 +87,18 @@ scene.add(sun);
 // MAP
 // =====================================================
 
-const mapLoader = new GLTFLoader();
+const mapLoader =
+    new GLTFLoader();
 
 let gameMap = null;
 
 mapLoader.load(
-    "public/maps/drive_for_speed_-_map.glb",
+    "/maps/drive_for_speed_-_map.glb",
 
     (gltf) => {
 
-        gameMap = gltf.scene;
+        gameMap =
+            gltf.scene;
 
         gameMap.position.set(
             0,
@@ -110,36 +115,53 @@ mapLoader.load(
         gameMap.traverse(
             (object) => {
 
-                if (object.isMesh) {
+                if (
+                    object.isMesh
+                ) {
 
-                    object.castShadow = true;
-                    object.receiveShadow = true;
+                    object.castShadow =
+                        true;
 
-                    if (object.material) {
-                        object.material.needsUpdate = true;
+                    object.receiveShadow =
+                        true;
+
+                    if (
+                        object.material
+                    ) {
+
+                        object.material
+                            .needsUpdate =
+                            true;
                     }
                 }
             }
         );
 
-        scene.add(gameMap);
+        scene.add(
+            gameMap
+        );
 
         console.log(
-            "✅ Battle Arena map loaded!"
+            "✅ Battle Arena GLB map loaded!"
         );
     },
 
     (progress) => {
 
-        if (progress.total > 0) {
+        if (
+            progress.total > 0
+        ) {
 
             const percent =
                 Math.round(
-                    (progress.loaded / progress.total) * 100
+                    (
+                        progress.loaded /
+                        progress.total
+                    ) * 100
                 );
 
             console.log(
-                `🗺️ Map loading: ${percent}%`
+                `🗺️ Map: ${percent}%`
             );
         }
     },
@@ -147,7 +169,7 @@ mapLoader.load(
     (error) => {
 
         console.error(
-            "❌ Map loading failed:",
+            "❌ GLB map error:",
             error
         );
     }
@@ -157,29 +179,34 @@ mapLoader.load(
 // FALLBACK GROUND
 // =====================================================
 
-const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(
-        500,
-        500
-    ),
+const ground =
+    new THREE.Mesh(
+        new THREE.PlaneGeometry(
+            500,
+            500
+        ),
 
-    new THREE.MeshStandardMaterial({
-        color: 0x3ca34a
-    })
-);
+        new THREE.MeshStandardMaterial({
+            color: 0x3ca34a
+        })
+    );
 
 ground.rotation.x =
     -Math.PI / 2;
 
-ground.receiveShadow = true;
+ground.receiveShadow =
+    true;
 
-scene.add(ground);
+scene.add(
+    ground
+);
 
 // =====================================================
 // PLAYER
 // =====================================================
 
-const player = new THREE.Object3D();
+const player =
+    new THREE.Object3D();
 
 player.position.set(
     0,
@@ -187,9 +214,13 @@ player.position.set(
     10
 );
 
-scene.add(player);
+scene.add(
+    player
+);
 
-player.add(camera);
+player.add(
+    camera
+);
 
 camera.position.set(
     0,
@@ -201,41 +232,48 @@ camera.position.set(
 // WEAPON
 // =====================================================
 
-const weapon = new THREE.Group();
+const weapon =
+    new THREE.Group();
 
-const weaponBody = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.25,
-        0.2,
-        0.9
-    ),
+const weaponBody =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            0.25,
+            0.2,
+            0.9
+        ),
 
-    new THREE.MeshStandardMaterial({
-        color: 0x222222
-    })
-);
+        new THREE.MeshStandardMaterial({
+            color: 0x222222
+        })
+    );
 
 weaponBody.position.z =
     -0.45;
 
-weapon.add(weaponBody);
-
-const barrel = new THREE.Mesh(
-    new THREE.BoxGeometry(
-        0.08,
-        0.08,
-        0.4
-    ),
-
-    new THREE.MeshStandardMaterial({
-        color: 0x111111
-    })
+weapon.add(
+    weaponBody
 );
+
+const barrel =
+    new THREE.Mesh(
+        new THREE.BoxGeometry(
+            0.08,
+            0.08,
+            0.4
+        ),
+
+        new THREE.MeshStandardMaterial({
+            color: 0x111111
+        })
+    );
 
 barrel.position.z =
     -1;
 
-weapon.add(barrel);
+weapon.add(
+    barrel
+);
 
 weapon.position.set(
     0.35,
@@ -243,7 +281,9 @@ weapon.position.set(
     -0.7
 );
 
-camera.add(weapon);
+camera.add(
+    weapon
+);
 
 // =====================================================
 // ENEMIES
@@ -251,12 +291,14 @@ camera.add(weapon);
 
 const enemies = [];
 
-function createEnemy(x, z) {
+function createEnemy(
+    x,
+    z
+) {
 
     const enemy =
         new THREE.Group();
 
-    // BODY
     const body =
         new THREE.Mesh(
             new THREE.BoxGeometry(
@@ -270,16 +312,19 @@ function createEnemy(x, z) {
             })
         );
 
-    body.position.y = 1;
+    body.position.y =
+        1;
 
-    body.castShadow = true;
+    body.castShadow =
+        true;
 
     body.userData.enemy =
         enemy;
 
-    enemy.add(body);
+    enemy.add(
+        body
+    );
 
-    // HEAD
     const head =
         new THREE.Mesh(
             new THREE.SphereGeometry(
@@ -293,14 +338,18 @@ function createEnemy(x, z) {
             })
         );
 
-    head.position.y = 2;
+    head.position.y =
+        2;
 
-    head.castShadow = true;
+    head.castShadow =
+        true;
 
     head.userData.enemy =
         enemy;
 
-    enemy.add(head);
+    enemy.add(
+        head
+    );
 
     enemy.position.set(
         x,
@@ -314,12 +363,14 @@ function createEnemy(x, z) {
     enemy.userData.dead =
         false;
 
-    scene.add(enemy);
+    scene.add(
+        enemy
+    );
 
-    enemies.push(enemy);
+    enemies.push(
+        enemy
+    );
 }
-
-// Initial enemies
 
 createEnemy(
     0,
@@ -355,9 +406,9 @@ window.addEventListener(
             event.key.toLowerCase()
         ] = true;
 
-        // RELOAD
         if (
-            event.key.toLowerCase() === "r"
+            event.key.toLowerCase() ===
+            "r"
         ) {
 
             reload();
@@ -428,8 +479,8 @@ renderer.domElement.addEventListener(
     "click",
     () => {
 
-        renderer.domElement.requestPointerLock();
-
+        renderer.domElement
+            .requestPointerLock();
     }
 );
 
@@ -472,7 +523,8 @@ function updateMovement() {
         right === 0
     ) {
 
-        player.position.y = 1.7;
+        player.position.y =
+            1.7;
 
         return;
     }
@@ -538,7 +590,6 @@ function updateMovement() {
         )
     );
 
-    // Map limits
     player.position.x =
         THREE.MathUtils.clamp(
             player.position.x,
@@ -585,7 +636,6 @@ function updateAmmoHUD() {
 function shoot() {
 
     if (ammo <= 0) {
-
         return;
     }
 
@@ -610,7 +660,6 @@ function shoot() {
         if (
             enemy.userData.dead
         ) {
-
             continue;
         }
 
@@ -638,7 +687,6 @@ function shoot() {
     if (
         hits.length === 0
     ) {
-
         return;
     }
 
@@ -649,7 +697,6 @@ function shoot() {
         hit.userData.enemy;
 
     if (!enemy) {
-
         return;
     }
 
@@ -678,7 +725,9 @@ function reload() {
         return;
     }
 
-    if (ammo === maxAmmo) {
+    if (
+        ammo === maxAmmo
+    ) {
         return;
     }
 
@@ -712,12 +761,13 @@ function reload() {
 // KILL ENEMY
 // =====================================================
 
-function killEnemy(enemy) {
+function killEnemy(
+    enemy
+) {
 
     if (
         enemy.userData.dead
     ) {
-
         return;
     }
 
@@ -791,7 +841,7 @@ function killEnemy(enemy) {
 }
 
 // =====================================================
-// SPAWN NEW ENEMY
+// SPAWN ENEMY
 // =====================================================
 
 function spawnEnemy() {
@@ -815,8 +865,11 @@ function spawnEnemy() {
 
     } while (
         Math.hypot(
-            x - player.position.x,
-            z - player.position.z
+            x -
+            player.position.x,
+
+            z -
+            player.position.z
         ) < 12
     );
 
@@ -839,7 +892,6 @@ function updateEnemies() {
         if (
             enemy.userData.dead
         ) {
-
             continue;
         }
 
